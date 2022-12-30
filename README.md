@@ -48,4 +48,10 @@ ae stop executable, exe
 ae stop container # Note this has an alias: 'ae oci kill'
 ```
 
+Logs
+
+```bash
+ae logs <options>
+```
+
 Stop a resource immediately. 
