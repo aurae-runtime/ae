@@ -3,7 +3,7 @@ name: Build Master Release versions
 on:
   push:
     branches:
-      - master
+      - main
 
 ## Publish a docker image with the CLI? Future use as a runjob maybe?
 env:
