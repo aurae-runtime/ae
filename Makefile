@@ -49,8 +49,7 @@ compile: mod ## Compile for the local architecture ⚙
 	-X 'main.Copyright=$(copyright)' \
 	-X 'main.License=$(license)' \
 	-X 'main.Name=$(target)'" \
-	-o bin/$(target) main.go
-	chmod +x bin/*
+	-o bin/$(target) .
 
 mod: ## Go mod things
 	go mod tidy
