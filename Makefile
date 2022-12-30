@@ -43,12 +43,12 @@ copyright   ?=  Copyright (c) $(year)
 compile: mod ## Compile for the local architecture ⚙
 	@echo "Compiling..."
 	go build -ldflags "\
-	-X 'github.com/$(org)/$(target).Version=$(version)' \
-	-X 'github.com/$(org)/$(target).AuthorName=$(authorname)' \
-	-X 'github.com/$(org)/$(target).AuthorEmail=$(authoremail)' \
-	-X 'github.com/$(org)/$(target).Copyright=$(copyright)' \
-	-X 'github.com/$(org)/$(target).License=$(license)' \
-	-X 'github.com/$(org)/$(target).Name=$(target)'" \
+	-X 'main.Version=$(version)' \
+	-X 'main.AuthorName=$(authorname)' \
+	-X 'main.AuthorEmail=$(authoremail)' \
+	-X 'main.Copyright=$(copyright)' \
+	-X 'main.License=$(license)' \
+	-X 'main.Name=$(target)'" \
 	-o bin/$(target) main.go
 	chmod +x bin/*
 
