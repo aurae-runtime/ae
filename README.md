@@ -1,2 +1,4 @@
-# ae
-Unix inspired command line client for Aurae
+# Aurae AE
+
+Unix inspired command line client for Aurae.
+
