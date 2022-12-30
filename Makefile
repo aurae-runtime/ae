@@ -72,11 +72,11 @@ clean: ## Clean your artifacts 🧼
 .PHONY: release
 release: ## Make the binaries for a GitHub release 📦
 	mkdir -p release
-	GOOS="linux" GOARCH="amd64" go build -ldflags "-X 'github.com/$(org)/$(target).Version=$(version)'" -o release/$(target)-linux-amd64 cmd/*.go
-	GOOS="linux" GOARCH="arm" go build -ldflags "-X 'github.com/$(org)/$(target).Version=$(version)'" -o release/$(target)-linux-arm cmd/*.go
-	GOOS="linux" GOARCH="arm64" go build -ldflags "-X 'github.com/$(org)/$(target).Version=$(version)'" -o release/$(target)-linux-arm64 cmd/*.go
-	GOOS="linux" GOARCH="386" go build -ldflags "-X 'github.com/$(org)/$(target).Version=$(version)'" -o release/$(target)-linux-386 cmd/*.go
-	GOOS="darwin" GOARCH="amd64" go build -ldflags "-X 'github.com/$(org)/$(target).Version=$(version)'" -o release/$(target)-darwin-amd64 cmd/*.go
+	GOOS="linux" GOARCH="amd64" go build -ldflags "-X 'main.Version=$(version)'" -o release/$(target)-linux-amd64 cmd/*.go
+	GOOS="linux" GOARCH="arm" go build -ldflags "-X 'main.Version=$(version)'" -o release/$(target)-linux-arm cmd/*.go
+	GOOS="linux" GOARCH="arm64" go build -ldflags "-X 'main.Version=$(version)'" -o release/$(target)-linux-arm64 cmd/*.go
+	GOOS="linux" GOARCH="386" go build -ldflags "-X 'main.Version=$(version)'" -o release/$(target)-linux-386 cmd/*.go
+	GOOS="darwin" GOARCH="amd64" go build -ldflags "-X 'main.Version=$(version)'" -o release/$(target)-darwin-amd64 cmd/*.go
 
 .PHONY: help
 help:  ## Show help messages for make targets
