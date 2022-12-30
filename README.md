@@ -45,7 +45,7 @@ Run a resource immediately.
 ```bash
 ae stop
 ae stop executable, exe
-ae stop container # Note this has an alias: 'ae oci stop'
+ae stop container # Note this has an alias: 'ae oci kill'
 ```
 
 Stop a resource immediately. 
