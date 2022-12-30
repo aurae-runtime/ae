@@ -28,34 +28,39 @@
  *                                                                            *
 \* -------------------------------------------------------------------------- */
 
-package cmd
+use clap::{Parser, Subcommand};
 
-import (
-	"fmt"
-
-	"github.com/spf13/cobra"
-)
-
-// startCmd represents the start command
-var startCmd = &cobra.Command{
-	Use:   "start",
-	Short: "Start the user-specified code from process.",
-	Long: `Start the user-specified code from process.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("start called")
-	},
+#[derive(Debug, Parser)]
+struct Cli {
+    #[command(subcommand)]
+    command: Command,
 }
 
-func init() {
-	ociCmd.AddCommand(startCmd)
+#[derive(Debug, Subcommand)]
+enum Command {
+    /// Create a container from a bundle directory
+    Create,
 
-	// Here you will define your flags and configuration settings.
+    /// Release container resources after the container process has exited
+    Delete,
 
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// startCmd.PersistentFlags().String("foo", "", "A help for foo")
+    /// Send a signal to the container process
+    Kill,
 
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// startCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+    /// Start the user-specified code from process
+    Start,
+    
+    /// Request the container state
+    State,
+}
+
+fn main() {
+    let args = Cli::parse();
+    match args.command {
+        Command::Create => todo!(),
+        Command::Delete => todo!(),
+        Command::Kill => todo!(),
+        Command::Start => todo!(),
+        Command::State => todo!(),
+    }
 }
