@@ -31,10 +31,10 @@
 package main
 
 var (
-	Name        string = ""
-	Version     string = ""
-	Copyright   string = ""
-	License     string = ""
-	AuthorName  string = ""
-	AuthorEmail string = ""
+	Name        string
+	Version     string
+	Copyright   string
+	License     string
+	AuthorName  string
+	AuthorEmail string
 )
