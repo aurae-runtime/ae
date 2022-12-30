@@ -28,7 +28,6 @@
 #                                                                              #
 # ---------------------------------------------------------------------------- #
 
-all: compile
 
 # Variables and Settings
 version     ?=  0.0.1
@@ -39,6 +38,20 @@ authoremail ?=  info@aurae.io
 license     ?=  Apache2
 year        ?=  2023
 copyright   ?=  Copyright (c) $(year)
+
+
+docker_release:
+	  docker build  --build-arg makeArguments="vet clean mod mod test compile release" -t aurae-runtime/ae-builder -f ./Dockerfile.build .
+	  docker rm -f ae-temp-image 2>/dev/null
+	  docker run  --name ae-temp-image -d aurae-runtime/ae-builder 
+	  mkdir -p build
+	  docker cp ae-temp-image:/go/src/github.com/aurae-runtime/ae/release ./build
+	  docker rm -f ae-temp-image
+
+all: vet clean mod mod test compile install
+
+vet:
+	go vet .
 
 compile: mod ## Compile for the local architecture ⚙
 	@echo "Compiling..."
@@ -60,13 +73,16 @@ install: ## Install the program to /usr/bin 🎉
 	@echo "Installing..."
 	sudo cp $(target) /usr/bin/$(target)
 
-test: clean compile install ## 🤓 Run go tests
+test: clean compile ## 🤓 Run go tests
 	@echo "Testing..."
 	go test -v ./...
 
 clean: ## Clean your artifacts 🧼
 	@echo "Cleaning..."
 	rm -rvf release/*
+
+version:
+	@echo "$(version)"
 
 .PHONY: release
 release: ## Make the binaries for a GitHub release 📦
