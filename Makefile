@@ -40,16 +40,16 @@ year        ?=  2023
 copyright   ?=  Copyright (c) $(year)
 
 
-docker_release:
-	  docker build  --build-arg makeArguments="vet clean mod mod compile test release" -t aurae-runtime/ae-builder -f ./Dockerfile.build .
+docker_pr:
+	  docker build  --build-arg makeArguments="vet clean mod compile test" -t aurae-runtime/ae-builder -f ./Dockerfile.build .
 	  docker rm -f ae-temp-image 2>/dev/null
 	  docker run  --name ae-temp-image -d aurae-runtime/ae-builder 
 	  mkdir -p build
 	  docker cp ae-temp-image:/go/src/github.com/aurae-runtime/ae/release ./build
 	  docker rm -f ae-temp-image
 
-docker_pr:
-	  docker build  --build-arg makeArguments="vet clean mod mod compile test" -t aurae-runtime/ae-builder -f ./Dockerfile.build .
+docker_release:
+	  docker build  --build-arg makeArguments="clean mod compile test release" -t aurae-runtime/ae-builder -f ./Dockerfile.build .
 	  docker rm -f ae-temp-image 2>/dev/null
 	  docker run  --name ae-temp-image -d aurae-runtime/ae-builder 
 	  mkdir -p build
