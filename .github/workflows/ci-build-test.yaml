@@ -1,0 +1,58 @@
+name: Build Master Release versions
+
+on:
+  push:
+    branches:
+      - master
+
+## Publish a docker image with the CLI? Future use as a runjob maybe?
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: aurae-runtime/ae
+
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    ## needed to publish eventually to GHCR
+    permissions:
+      contents: read
+      packages: write
+    defaults:
+      run:
+        shell: bash
+        working-directory: .
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Build
+        uses: docker/setup-buildx-action@v2
+
+      - name: Get version 
+        id: get_version
+        run:
+          echo "::set-output name=VERSION::$(make version)"
+
+      - name: Build and Test using Docker
+        run: |
+          make docker_release
+
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "${{ steps.get_version.outputs.VERSION }}-rc"
+          prerelease: true
+          title: "Master Build RC"
+          files: |
+            LICENSE
+            build/release/*
+            
+
+#     - name: Log in to the Container registry
+#       uses: docker/login-action@v2
+#       with:
+#         registry: ${{ env.REGISTRY }}
+#         username: ${{ github.actor }}
+#         password: ${{ secrets.GITHUB_TOKEN }}
+
+

@@ -1,0 +1,10 @@
+FROM golang:1.19 as builder
+
+
+RUN mkdir -p /go/src/github.com/aurae-runtime/ae
+WORKDIR /go/src/github.com/aurae-runtime/ae
+ADD ./ /go/src/github.com/aurae-runtime/ae
+
+ARG makeArguments=vet clean test compile release
+
+RUN make $makeArguments
