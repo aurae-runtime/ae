@@ -1,0 +1,45 @@
+name: goreleaser
+
+on:
+  push:
+    # run only against tags
+    tags:
+      - '*'
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  goreleaser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - run: git fetch --force --tags
+      - uses: actions/setup-go@v3
+        with:
+          go-version: '>=1.19.4'
+          cache: true
+          
+      - name: Dotenv Action
+        id: dotenv
+        uses: falti/dotenv-action@v1.0.2
+        with:
+          log-variables: true
+
+      - uses: goreleaser/goreleaser-action@v4
+        with:
+          distribution: goreleaser
+          version: latest
+          args: release --rm-dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AE_TARGET: ${{ steps.dotenv.outputs.ae_target }}
+          AE_ORG: ${{ steps.dotenv.outputs.ae_org }}
+          AE_AUTHOR_NAME: ${{ steps.dotenv.outputs.ae_author_name}}
+          AE_AUTHOR_EMAIL: ${{ steps.dotenv.outputs.ae_author_email}}
+          AE_LICENSE: ${{ steps.dotenv.outputs.ae_license }}
+          AE_YEAR: ${{ steps.dotenv.outputs.ae_year }}
+          AE_COPYRIGHT: ${{ steps.dotenv.outputs.ae_copyright }}

@@ -51,6 +51,11 @@ compile: mod ## Compile for the local architecture ⚙
 	-X 'main.Name=$(target)'" \
 	-o bin/$(target) .
 
+.PHONY: tools
+tools: ## Install tools 🛠
+	go install github.com/goreleaser/goreleaser@latest
+	go install github.com/joho/godotenv/cmd/godotenv@latest
+
 mod: ## Go mod things
 	go mod tidy
 	go mod vendor
