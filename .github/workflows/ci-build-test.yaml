@@ -31,7 +31,7 @@ jobs:
       - name: Get version 
         id: get_version
         run:
-          echo "::set-output name=VERSION::$(make version)"
+          echo "VERSION=$(make version)" > $GITHUB_OUTPUT
 
       - name: Build and Test using Docker
         run: |
