@@ -54,7 +54,6 @@ compile: mod ## Compile for the local architecture ⚙
 .PHONY: tools
 tools: ## Install tools 🛠
 	go install github.com/goreleaser/goreleaser@latest
-	go install github.com/joho/godotenv/cmd/godotenv@latest
 
 mod: ## Go mod things
 	go mod tidy
@@ -71,16 +70,8 @@ test: clean compile install ## 🤓 Run go tests
 
 clean: ## Clean your artifacts 🧼
 	@echo "Cleaning..."
+	rm -rvf dist/*
 	rm -rvf release/*
-
-.PHONY: release
-release: ## Make the binaries for a GitHub release 📦
-	mkdir -p release
-	GOOS="linux" GOARCH="amd64" go build -ldflags "-X 'main.Version=$(version)'" -o release/$(target)-linux-amd64 cmd/*.go
-	GOOS="linux" GOARCH="arm" go build -ldflags "-X 'main.Version=$(version)'" -o release/$(target)-linux-arm cmd/*.go
-	GOOS="linux" GOARCH="arm64" go build -ldflags "-X 'main.Version=$(version)'" -o release/$(target)-linux-arm64 cmd/*.go
-	GOOS="linux" GOARCH="386" go build -ldflags "-X 'main.Version=$(version)'" -o release/$(target)-linux-386 cmd/*.go
-	GOOS="darwin" GOARCH="amd64" go build -ldflags "-X 'main.Version=$(version)'" -o release/$(target)-darwin-amd64 cmd/*.go
 
 .PHONY: help
 help:  ## Show help messages for make targets

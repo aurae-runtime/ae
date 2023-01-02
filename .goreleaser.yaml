@@ -24,7 +24,7 @@ builds:
       - goos: darwin
         goarch: "386"
     ldflags:
-      - -s -w -X main.build={{.Env.AE_VERSION}} -X 'main.AuthorName={{ .Env.AE_AUTHOR_NAME}}' -X 'main.AuthorEmail={{.Env.AE_AUTHOR_EMAIL}}' -X 'main.Copyright={{.Env.AE_COPYRIGHT}}' -X 'main.License={{.Env.AE_LICENSE}}' -X 'main.Name={{.Env.AE_TARGET}}'
+      - -s -w -X 'main.build={{ .Version }}' -X 'main.AuthorName="The Aurae Authors"' -X 'main.AuthorEmail="info@aurae.io"' -X 'main.Copyright=Copyright (c) 2023' -X 'main.License=Apache2' -X 'main.Name=ae'
 
 archives:
   - format: tar.gz
