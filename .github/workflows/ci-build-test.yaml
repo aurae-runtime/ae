@@ -1,4 +1,4 @@
-name: Build Master Release versions
+name: Build Main Release versions
 
 on:
   push:
