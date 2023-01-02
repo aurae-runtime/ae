@@ -28,6 +28,7 @@
 #                                                                              #
 # ---------------------------------------------------------------------------- #
 
+GORELEASER_FLAGS ?= --snapshot --rm-dist
 all: compile
 
 # Variables and Settings
@@ -51,9 +52,9 @@ compile: mod ## Compile for the local architecture ⚙
 	-X 'main.Name=$(target)'" \
 	-o bin/$(target) .
 
-.PHONY: tools
-tools: ## Install tools 🛠
-	go install github.com/goreleaser/goreleaser@latest
+.PHONY: goreleaser
+goreleaser: ## Run goreleaser directly at the pinned version 🛠
+	go run github.com/goreleaser/goreleaser@v1.14 $(GORELEASER_FLAGS)
 
 mod: ## Go mod things
 	go mod tidy
