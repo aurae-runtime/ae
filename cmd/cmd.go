@@ -28,34 +28,34 @@
  *                                                                            *
 \* -------------------------------------------------------------------------- */
 
-package cmd
+package aeCMD
 
 import (
-	"fmt"
+	"io"
 
 	"github.com/spf13/cobra"
 )
 
-// startCmd represents the start command
-var startCmd = &cobra.Command{
-	Use:   "start",
-	Short: "Start the user-specified code from process.",
-	Long: `Start the user-specified code from process.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("start called")
-	},
+type Option interface {
+	// Complete is the method where the option is extracting the data from the
+	// args and is setting its different attributes.
+	Complete(args []string) error
+	// Validate is ensuring that the different value of its attribute are
+	// coherent (when it makes sense).
+	Validate() error
+	// Execute is the method used by the command to actually run the business
+	// logic.
+	Execute() error
+	SetWriter(writer io.Writer)
 }
 
-func init() {
-	ociCmd.AddCommand(startCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// startCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// startCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+func Run(o Option, cmd *cobra.Command, args []string) error {
+	o.SetWriter(cmd.OutOrStdout())
+	if err := o.Complete(args); err != nil {
+		return err
+	}
+	if err := o.Validate(); err != nil {
+		return err
+	}
+	return o.Execute()
 }

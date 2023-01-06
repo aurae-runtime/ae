@@ -28,34 +28,50 @@
  *                                                                            *
 \* -------------------------------------------------------------------------- */
 
-package cmd
+package oci_create
 
 import (
-	"fmt"
+	"io"
 
+	aeCMD "github.com/aurae-runtime/ae/cmd"
+	"github.com/aurae-runtime/ae/opt"
+	"github.com/aurae-runtime/ae/output"
 	"github.com/spf13/cobra"
 )
 
-// stateCmd represents the state command
-var stateCmd = &cobra.Command{
-	Use:   "state",
-	Short: "Request the container state.",
-	Long: `Request the container state.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("state called")
-	},
+type option struct {
+	aeCMD.Option
+	opt.OutputOption
+	writer io.Writer
 }
 
-func init() {
-	ociCmd.AddCommand(stateCmd)
+func (o *option) Complete(_ []string) error {
+	return nil
+}
 
-	// Here you will define your flags and configuration settings.
+func (o *option) Validate() error {
+	return nil
+}
 
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// stateCmd.PersistentFlags().String("foo", "", "A help for foo")
+func (o *option) Execute() error {
+	return output.HandleString(o.writer, "create called")
+}
 
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// stateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+func (o *option) SetWriter(writer io.Writer) {
+	o.writer = writer
+}
+
+func NewCMD() *cobra.Command {
+	o := &option{}
+	cmd := &cobra.Command{
+		Use:   "create",
+		Short: "Create a container from a bundle directory.",
+		Long:  `Create a container from a bundle directory.`,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return aeCMD.Run(o, cmd, args)
+		},
+	}
+	// add flags here
+
+	return cmd
 }
