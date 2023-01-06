@@ -30,7 +30,9 @@
 
 package main
 
-import "github.com/aurae-runtime/ae/cmd"
+import (
+	cmd "github.com/aurae-runtime/ae/cmd/root"
+)
 
 func main() {
 	cmd.Execute()
