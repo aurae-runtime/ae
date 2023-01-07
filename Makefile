@@ -70,7 +70,7 @@ mod: ## Go mod things
 
 install: ## Install the program to /usr/bin 🎉
 	@echo "Installing..."
-	sudo cp $(target) /usr/bin/$(target)
+	sudo cp bin/$(target) /usr/bin/$(target)
 
 test: clean compile install ## 🤓 Run go tests
 	@echo "Testing..."
