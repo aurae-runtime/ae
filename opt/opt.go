@@ -28,12 +28,21 @@
  *                                                                            *
 \* -------------------------------------------------------------------------- */
 
-package main
+package opt
 
 import (
-	cmd "github.com/aurae-runtime/ae/cmd/root"
+	"github.com/aurae-runtime/ae/output"
+	"github.com/spf13/cobra"
 )
 
-func main() {
-	cmd.Execute()
+type OutputOption struct {
+	Output string
+}
+
+func (o *OutputOption) Complete() error {
+	return output.ValidateAndSet(&o.Output)
+}
+
+func AddOutputFlags(cmd *cobra.Command, o *OutputOption) {
+	cmd.Flags().StringVarP(&o.Output, "output", "o", "", "Kind of display: json, yaml, table or go. Default is yaml")
 }

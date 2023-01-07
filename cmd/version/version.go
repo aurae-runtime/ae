@@ -28,34 +28,65 @@
  *                                                                            *
 \* -------------------------------------------------------------------------- */
 
-package cmd
+package version
 
 import (
-	"fmt"
+	"io"
 
+	aeCMD "github.com/aurae-runtime/ae/cmd"
+	"github.com/aurae-runtime/ae/opt"
+	"github.com/aurae-runtime/ae/output"
+	"github.com/prometheus/common/version"
 	"github.com/spf13/cobra"
 )
 
-// createCmd represents the create command
-var createCmd = &cobra.Command{
-	Use:   "create",
-	Short: "Create a container from a bundle directory.",
-	Long: `Create a container from a bundle directory.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("create called")
-	},
+type outputVersion struct {
+	BuildTime string `json:"buildTime,omitempty" yaml:"buildTime,omitempty"`
+	Version   string `json:"version" yaml:"version"`
+	Commit    string `json:"commit,omitempty" yaml:"commit,omitempty"`
 }
 
-func init() {
-	ociCmd.AddCommand(createCmd)
+type option struct {
+	aeCMD.Option
+	opt.OutputOption
+	writer io.Writer
+	short  bool
+}
 
-	// Here you will define your flags and configuration settings.
+func (o *option) Complete(_ []string) error {
+	return nil
+}
 
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// createCmd.PersistentFlags().String("foo", "", "A help for foo")
+func (o *option) Validate() error {
+	return nil
+}
 
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// createCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+func (o *option) Execute() error {
+	clientVersion := &outputVersion{
+		Version: version.Version,
+	}
+	if !o.short {
+		clientVersion.BuildTime = version.BuildDate
+		clientVersion.Commit = version.Revision
+	}
+
+	return output.Handle(o.writer, o.Output, clientVersion)
+}
+
+func (o *option) SetWriter(writer io.Writer) {
+	o.writer = writer
+}
+
+func NewCMD() *cobra.Command {
+	o := &option{}
+	cmd := &cobra.Command{
+		Use:   "version",
+		Short: "Displays Aurae command line client version.",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return aeCMD.Run(o, cmd, args)
+		},
+	}
+	opt.AddOutputFlags(cmd, &o.OutputOption)
+	cmd.Flags().BoolVar(&o.short, "short", o.short, "If true, just print the version number.")
+	return cmd
 }

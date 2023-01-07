@@ -28,23 +28,67 @@
  *                                                                            *
 \* -------------------------------------------------------------------------- */
 
-package cmd
+package output
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
 
-	"github.com/spf13/cobra"
+	"gopkg.in/yaml.v2"
 )
 
-var ociCmd = &cobra.Command{
-	Use:   "oci",
-	Short: "OCI Runtime Command Line Interface.",
-	Long: `OCI Runtime Command Line Interface.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("oci called")
-	},
+const (
+	JSONOutput  = "json"
+	YAMLOutput  = "yaml"
+	TableOutput = "table"
+	GoOutput    = "go"
+)
+
+// ValidateAndSet will validate the given output and if it's empty will set it
+// with the default value "yaml"
+func ValidateAndSet(o *string) error {
+	if *o == "" {
+		*o = YAMLOutput
+		return nil
+	} else if *o != YAMLOutput &&
+		*o != JSONOutput &&
+		*o != TableOutput &&
+		*o != GoOutput {
+		return fmt.Errorf(
+			"--ouput must be %q, %q, %q or %q",
+			JSONOutput,
+			YAMLOutput,
+			TableOutput,
+			GoOutput,
+		)
+	}
+
+	return nil
 }
 
-func init() {
-	rootCmd.AddCommand(ociCmd)
+func Handle(writer io.Writer, output string, obj interface{}) error {
+	var data []byte
+	var err error
+
+	switch output {
+	case JSONOutput:
+		data, err = json.Marshal(obj)
+	case TableOutput:
+		return fmt.Errorf("table output not implemented yet")
+	case GoOutput:
+		return fmt.Errorf("go output not implemented yet")
+	default:
+		data, err = yaml.Marshal(obj)
+	}
+	if err != nil {
+		return err
+	}
+	_, err = fmt.Fprintln(writer, string(data))
+	return err
+}
+
+func HandleString(writer io.Writer, msg string) error {
+	_, err := fmt.Fprintln(writer, msg)
+	return err
 }

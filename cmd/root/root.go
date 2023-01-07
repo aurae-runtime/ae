@@ -28,34 +28,35 @@
  *                                                                            *
 \* -------------------------------------------------------------------------- */
 
-package cmd
+package root_cmd
 
 import (
-	"fmt"
+	"os"
 
+	"github.com/aurae-runtime/ae/cmd/oci"
+	"github.com/aurae-runtime/ae/cmd/version"
 	"github.com/spf13/cobra"
 )
 
-// killCmd represents the kill command
-var killCmd = &cobra.Command{
-	Use:   "kill",
-	Short: "Send a signal to the container process.",
-	Long: `Send a signal to the container process.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("kill called")
-	},
+var rootCmd = &cobra.Command{
+	Use:   "ae",
+	Short: "Unix inspired command line client for Aurae.\n",
+	Long:  `Unix inspired command line client for Aurae.`,
+	// TODO help by default
+	// Run: func(cmd *cobra.Command, args []string) { },
+}
+
+func Execute() {
+	err := rootCmd.Execute()
+	if err != nil {
+		os.Exit(1)
+	}
 }
 
 func init() {
-	ociCmd.AddCommand(killCmd)
+	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// killCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// killCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// add subcommands
+	rootCmd.AddCommand(oci.NewCMD())
+	rootCmd.AddCommand(version.NewCMD())
 }

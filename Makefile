@@ -41,6 +41,10 @@ license     ?=  Apache2
 year        ?=  2023
 copyright   ?=  Copyright (c) $(year)
 
+COMMIT      := $(shell git rev-parse HEAD)
+DATE        := $(shell date +%Y-%m-%d)
+PKG_LDFLAGS := github.com/prometheus/common/version
+
 compile: mod ## Compile for the local architecture ⚙
 	@echo "Compiling..."
 	go build -ldflags "\
@@ -49,7 +53,10 @@ compile: mod ## Compile for the local architecture ⚙
 	-X 'main.AuthorEmail=$(authoremail)' \
 	-X 'main.Copyright=$(copyright)' \
 	-X 'main.License=$(license)' \
-	-X 'main.Name=$(target)'" \
+	-X 'main.Name=$(target)' \
+	-X '${PKG_LDFLAGS}.Version=$(version)' \
+	-X '${PKG_LDFLAGS}.BuildDate=$(DATE)' \
+	-X '${PKG_LDFLAGS}.Revision=$(COMMIT)'" \
 	-o bin/$(target) .
 
 .PHONY: goreleaser

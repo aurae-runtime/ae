@@ -28,12 +28,50 @@
  *                                                                            *
 \* -------------------------------------------------------------------------- */
 
-package main
+package oci_create
 
 import (
-	cmd "github.com/aurae-runtime/ae/cmd/root"
+	"io"
+
+	aeCMD "github.com/aurae-runtime/ae/cmd"
+	"github.com/aurae-runtime/ae/opt"
+	"github.com/aurae-runtime/ae/output"
+	"github.com/spf13/cobra"
 )
 
-func main() {
-	cmd.Execute()
+type option struct {
+	aeCMD.Option
+	opt.OutputOption
+	writer io.Writer
+}
+
+func (o *option) Complete(_ []string) error {
+	return nil
+}
+
+func (o *option) Validate() error {
+	return nil
+}
+
+func (o *option) Execute() error {
+	return output.HandleString(o.writer, "create called")
+}
+
+func (o *option) SetWriter(writer io.Writer) {
+	o.writer = writer
+}
+
+func NewCMD() *cobra.Command {
+	o := &option{}
+	cmd := &cobra.Command{
+		Use:   "create",
+		Short: "Create a container from a bundle directory.",
+		Long:  `Create a container from a bundle directory.`,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return aeCMD.Run(o, cmd, args)
+		},
+	}
+	// add flags here
+
+	return cmd
 }
