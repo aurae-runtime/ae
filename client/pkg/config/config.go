@@ -28,87 +28,59 @@
  *                                                                            *
 \* -------------------------------------------------------------------------- */
 
-package client
+package config
 
 import (
-	"context"
-	"crypto/tls"
-	"crypto/x509"
 	"fmt"
 	"log"
-	"net"
-	"os"
-
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
-
-	"github.com/aurae-runtime/ae/client/pkg/config"
+	"os/user"
 )
 
-type AuraeClient interface{}
-
-type auraeClient struct {
-	cfg  *config.Configs
-	conn grpc.ClientConnInterface
+type Configs struct {
+	Auth   Auth
+	System System
 }
 
-func New(ctx context.Context, cfg ...config.Config) (AuraeClient, error) {
-	cf, err := config.From(cfg...)
+type Config interface {
+	Set(p *Configs) error
+}
+
+func Default() (*Configs, error) {
+	usr, err := user.Current()
 	if err != nil {
-		log.Fatal("Cannot initialize config", err)
-	}
-
-	tlsCredentials, err := loadTLSCredentials(cf.Auth)
-	if err != nil {
-		log.Fatal("Cannot load TLS credentials", err)
-	}
-
-	dialer := func(ctx context.Context, addr string) (net.Conn, error) {
-		d := net.Dialer{}
-
-		return d.DialContext(ctx, cf.System.Protocol, addr)
-	}
-
-	conn, err := grpc.Dial(
-		cf.System.Socket,
-		grpc.WithTransportCredentials(tlsCredentials),
-		grpc.WithContextDialer(dialer),
-	)
-	if err != nil {
-		log.Fatal("Cannot Dial", err)
+		log.Fatal("Cannot get current user", err)
 
 		return nil, err
 	}
 
-	c := &auraeClient{
-		cfg:  cf,
-		conn: conn,
+	cfg := &Configs{
+		Auth: Auth{
+			CaCert:     fmt.Sprintf("%s/.aurae/pki/ca.crt", usr.HomeDir),
+			ClientCert: fmt.Sprintf("%s/.aurae/pki/_signed.client.nova.crt", usr.HomeDir),
+			ClientKey:  fmt.Sprintf("%s/.aurae/pki/client.nova.key", usr.HomeDir),
+			ServerName: "server.unsafe.aurae.io",
+		},
+		System: System{
+			Protocol: "unix",
+			Socket:   "/var/run/aurae/aurae.sock",
+		},
+	}
+
+	return cfg, nil
+}
+
+func From(cfg ...Config) (*Configs, error) {
+	c, err := Default()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, config := range cfg {
+		err := config.Set(c)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return c, nil
-}
-
-func loadTLSCredentials(auth config.Auth) (credentials.TransportCredentials, error) {
-	caPEM, err := os.ReadFile(auth.CaCert)
-	if err != nil {
-		return nil, err
-	}
-
-	certPool := x509.NewCertPool()
-	if !certPool.AppendCertsFromPEM(caPEM) {
-		return nil, fmt.Errorf("failed to add server CA's certificate")
-	}
-
-	clientKeyPair, err := tls.LoadX509KeyPair(auth.ClientCert, auth.ClientKey)
-	if err != nil {
-		return nil, err
-	}
-
-	config := &tls.Config{
-		Certificates: []tls.Certificate{clientKeyPair},
-		RootCAs:      certPool,
-		ServerName:   auth.ServerName,
-	}
-
-	return credentials.NewTLS(config), nil
 }
