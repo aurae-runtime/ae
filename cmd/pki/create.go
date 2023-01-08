@@ -84,9 +84,10 @@ func (o *option) SetWriter(writer io.Writer) {
 func NewCMD() *cobra.Command {
 	o := &option{}
 	cmd := &cobra.Command{
-		Use:     "create",
-		Short:   "Creates a CA for auraed.",
-		Example: "ae create my.domain.com",
+		Use:   "create",
+		Short: "Creates a CA for auraed.",
+		Example: `ae create my.domain.com
+ae create --dir ./pki/ my.domain.com`,
 
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return aeCMD.Run(o, cmd, args)
