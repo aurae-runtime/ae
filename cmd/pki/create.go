@@ -28,37 +28,72 @@
  *                                                                            *
 \* -------------------------------------------------------------------------- */
 
-package root_cmd
+package pki_create
 
 import (
-	"os"
+	"fmt"
+	"io"
 
-	"github.com/aurae-runtime/ae/cmd/oci"
-	pki_create "github.com/aurae-runtime/ae/cmd/pki"
-	"github.com/aurae-runtime/ae/cmd/version"
+	aeCMD "github.com/aurae-runtime/ae/cmd"
+	"github.com/aurae-runtime/ae/opt"
+	"github.com/aurae-runtime/ae/pkg/pki"
 	"github.com/spf13/cobra"
 )
 
-var rootCmd = &cobra.Command{
-	Use:   "ae",
-	Short: "Unix inspired command line client for Aurae.\n",
-	Long:  `Unix inspired command line client for Aurae.`,
-	// TODO help by default
-	// Run: func(cmd *cobra.Command, args []string) { },
+type outputVersion struct {
+	BuildTime string `json:"buildTime,omitempty" yaml:"buildTime,omitempty"`
+	Version   string `json:"version" yaml:"version"`
+	Commit    string `json:"commit,omitempty" yaml:"commit,omitempty"`
 }
 
-func Execute() {
-	err := rootCmd.Execute()
-	if err != nil {
-		os.Exit(1)
+type option struct {
+	aeCMD.Option
+	opt.OutputOption
+	directory string
+	domain    string
+	writer    io.Writer
+}
+
+func (o *option) Complete(args []string) error {
+	if len(args) == 0 {
+		return fmt.Errorf("command 'create' requires a domain name as argument")
 	}
+	if len(args) > 1 {
+		return fmt.Errorf("too many arguments for command 'create', expect %d, got %d", 1, len(args))
+	}
+
+	o.domain = args[0]
+
+	return nil
 }
 
-func init() {
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+func (o *option) Validate() error {
+	return nil
+}
 
-	// add subcommands
-	rootCmd.AddCommand(oci.NewCMD())
-	rootCmd.AddCommand(version.NewCMD())
-	rootCmd.AddCommand(pki_create.NewCMD())
+func (o *option) Execute() error {
+	pki.CreateRootCA(o.directory, o.domain)
+
+	return nil
+}
+
+func (o *option) SetWriter(writer io.Writer) {
+	o.writer = writer
+}
+
+func NewCMD() *cobra.Command {
+	o := &option{}
+	cmd := &cobra.Command{
+		Use:     "create",
+		Short:   "Creates a CA for auraed.",
+		Example: "ae create my.domain.com",
+
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return aeCMD.Run(o, cmd, args)
+		},
+	}
+
+	cmd.Flags().StringVarP(&o.directory, "dir", "d", o.directory, "Output directory to store CA files.")
+
+	return cmd
 }
