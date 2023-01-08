@@ -34,6 +34,7 @@ import (
 	"context"
 	"crypto/tls"
 	"crypto/x509"
+	"errors"
 	"fmt"
 	"log"
 	"net"
@@ -43,13 +44,19 @@ import (
 	"google.golang.org/grpc/credentials"
 
 	"github.com/aurae-runtime/ae/client/pkg/config"
+	"github.com/aurae-runtime/ae/client/pkg/runtime"
 )
 
-type AuraeClient interface{}
+var ErrOptionNotAvailable = errors.New("option is not available")
+
+type AuraeClient interface {
+	Runtime() (runtime.Runtime, error)
+}
 
 type auraeClient struct {
-	cfg  *config.Configs
-	conn grpc.ClientConnInterface
+	cfg     *config.Configs
+	conn    grpc.ClientConnInterface
+	runtime runtime.Runtime
 }
 
 func New(ctx context.Context, cfg ...config.Config) (AuraeClient, error) {
@@ -80,9 +87,17 @@ func New(ctx context.Context, cfg ...config.Config) (AuraeClient, error) {
 		return nil, err
 	}
 
+	r, err := runtime.New(ctx, conn)
+	if err != nil {
+		log.Fatal("Cannot crete runtime client", err)
+
+		return nil, err
+	}
+
 	c := &auraeClient{
-		cfg:  cf,
-		conn: conn,
+		cfg:     cf,
+		conn:    conn,
+		runtime: r,
 	}
 
 	return c, nil
@@ -111,4 +126,12 @@ func loadTLSCredentials(auth config.Auth) (credentials.TransportCredentials, err
 	}
 
 	return credentials.NewTLS(config), nil
+}
+
+func (c *auraeClient) Runtime() (runtime.Runtime, error) {
+	if c.runtime == nil {
+		return nil, fmt.Errorf("configuration: %w", ErrOptionNotAvailable)
+	}
+
+	return c.runtime, nil
 }

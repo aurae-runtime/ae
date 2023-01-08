@@ -28,65 +28,76 @@
  *                                                                            *
 \* -------------------------------------------------------------------------- */
 
-package client
+package runtime
 
 import (
 	"context"
-	"testing"
+	"log"
+
+	"google.golang.org/grpc"
 
 	runtimev0 "github.com/aurae-runtime/ae/client/pkg/api/v0/runtime"
 )
 
-const (
-	testCellName = "MyBrandNewCell"
-)
-
-func TestClientRuntimeAllocate(t *testing.T) {
-	c, err := New(context.Background())
-	if err != nil {
-		t.Errorf("Cannot create client")
-	}
-
-	req := &runtimev0.CellServiceAllocateRequest{
-		Cell: &runtimev0.Cell{
-			Name:      testCellName,
-			CpuQuota:  400000,
-			CpuShares: 2,
-		},
-	}
-
-	r, err := c.Runtime()
-	if err != nil {
-		t.Errorf("Runtime service not available")
-	}
-
-	rsp, err := r.AllocateCell(context.Background(), req)
-	if err != nil {
-		t.Errorf("AllocateCell should have NOT returned an error")
-	}
-
-	if rsp.CellName != testCellName {
-		t.Error("Cell name wrong")
-	}
+type Runtime interface {
+	AllocateCell(context.Context, *runtimev0.CellServiceAllocateRequest) (*runtimev0.CellServiceAllocateResponse, error)
+	FreeCell(context.Context, *runtimev0.CellServiceFreeRequest) error
+	StartCell(context.Context, *runtimev0.CellServiceStartRequest) (*runtimev0.CellServiceStartResponse, error)
+	StopCell(context.Context, *runtimev0.CellServiceStopRequest) error
 }
 
-func TestClientRuntimeFree(t *testing.T) {
-	c, err := New(context.Background())
-	if err != nil {
-		t.Errorf("Cannot create client")
+type runtime struct {
+	cellClient runtimev0.CellServiceClient
+}
+
+func New(ctx context.Context, conn grpc.ClientConnInterface) (Runtime, error) {
+	r := &runtime{
+		cellClient: runtimev0.NewCellServiceClient(conn),
 	}
 
-	req := &runtimev0.CellServiceFreeRequest{
-		CellName: testCellName,
+	return r, nil
+}
+
+func (r *runtime) AllocateCell(ctx context.Context, req *runtimev0.CellServiceAllocateRequest) (*runtimev0.CellServiceAllocateResponse, error) {
+	rsp, err := r.cellClient.Allocate(ctx, req)
+	if err != nil {
+		log.Fatal("Cannot call Allocate ", err)
+
+		return nil, err
 	}
 
-	r, err := c.Runtime()
+	return rsp, nil
+}
+
+func (r *runtime) FreeCell(ctx context.Context, req *runtimev0.CellServiceFreeRequest) error {
+	_, err := r.cellClient.Free(ctx, req)
 	if err != nil {
-		t.Errorf("Runtime service not available")
+		log.Fatal("Cannot call Free ", err)
+
+		return err
 	}
 
-	err = r.FreeCell(context.Background(), req)
+	return nil
+}
+
+func (r *runtime) StartCell(ctx context.Context, req *runtimev0.CellServiceStartRequest) (*runtimev0.CellServiceStartResponse, error) {
+	rsp, err := r.cellClient.Start(ctx, req)
 	if err != nil {
-		t.Errorf("FreeCell should have NOT returned an error")
+		log.Fatal("Cannot call Start ", err)
+
+		return nil, err
 	}
+
+	return rsp, nil
+}
+
+func (r *runtime) StopCell(ctx context.Context, req *runtimev0.CellServiceStopRequest) error {
+	_, err := r.cellClient.Stop(ctx, req)
+	if err != nil {
+		log.Fatal("Cannot call Stop ", err)
+
+		return err
+	}
+
+	return nil
 }
