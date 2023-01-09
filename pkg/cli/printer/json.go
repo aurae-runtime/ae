@@ -18,7 +18,7 @@ func (printer *JSON) Format() string {
 	return "json"
 }
 
-func (printer *JSON) Print(obj any, w io.Writer) error {
+func (printer *JSON) Print(w io.Writer, obj any) error {
 	data, err := json.MarshalIndent(obj, "", "    ")
 	if err != nil {
 		return err

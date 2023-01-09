@@ -20,7 +20,7 @@ func (printer *YAML) Format() string {
 	return "yaml"
 }
 
-func (printer *YAML) Print(obj any, w io.Writer) error {
+func (printer *YAML) Print(w io.Writer, obj any) error {
 	output, err := yaml.Marshal(obj)
 	if err != nil {
 		return err

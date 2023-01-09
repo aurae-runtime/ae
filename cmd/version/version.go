@@ -70,7 +70,7 @@ func (o *option) Execute() error {
 		clientVersion.Commit = version.Revision
 	}
 
-	return o.outputFormat.ToPrinter().Print(clientVersion, o.writer)
+	return o.outputFormat.ToPrinter().Print(o.writer, clientVersion)
 }
 
 func (o *option) SetWriter(writer io.Writer) {

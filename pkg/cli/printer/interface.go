@@ -6,5 +6,5 @@ import (
 
 type Interface interface {
 	Format() string
-	Print(obj any, w io.Writer) error
+	Print(w io.Writer, obj any) error
 }
