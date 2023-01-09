@@ -34,6 +34,10 @@ func (o *OutputFormat) WithPrinter(p printer.Interface) *OutputFormat {
 }
 
 func (o *OutputFormat) AddFlags(cmd *cobra.Command) {
+	if len(o.printers) == 0 {
+		return
+	}
+
 	cmd.Flags().StringVarP(
 		&o.format,
 		"output",
