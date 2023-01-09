@@ -28,7 +28,7 @@
  *                                                                            *
 \* -------------------------------------------------------------------------- */
 
-package oci_create
+package kill
 
 import (
 	"fmt"
@@ -56,7 +56,7 @@ func (o *option) Validate() error {
 }
 
 func (o *option) Execute() error {
-	fmt.Fprintln(o.writer, "create called")
+	fmt.Fprintln(o.writer, "kill called")
 	return nil
 }
 
@@ -71,9 +71,9 @@ func NewCMD() *cobra.Command {
 			WithPrinter(printer.NewYAML()),
 	}
 	cmd := &cobra.Command{
-		Use:   "create",
-		Short: "Create a container from a bundle directory.",
-		Long:  `Create a container from a bundle directory.`,
+		Use:   "kill",
+		Short: "Send a signal to the container process.",
+		Long:  `Send a signal to the container process.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return aeCMD.Run(o, cmd, args)
 		},

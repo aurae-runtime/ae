@@ -13,16 +13,16 @@ Example: `ae oci` is a 1st level subcommand and therefore stored in `./cmd/oci/`
 ├── cmd.go
 ├── oci
 │   ├── create
-│   │   └── oci_create.go
+│   │   └── create.go
 │   ├── delete
-│   │   └── oci_delete.go
+│   │   └── delete.go
 │   ├── kill
-│   │   └── oci_kill.go
+│   │   └── kill.go
 │   ├── oci.go
 │   ├── start
-│   │   └── oci_start.go
+│   │   └── start.go
 │   └── state
-│       └── oci_state.go
+│       └── state.go
 ├── root
 │   └── root.go
 ├── runtime

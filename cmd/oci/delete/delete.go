@@ -28,7 +28,7 @@
  *                                                                            *
 \* -------------------------------------------------------------------------- */
 
-package oci_state
+package delete
 
 import (
 	"fmt"
@@ -56,7 +56,7 @@ func (o *option) Validate() error {
 }
 
 func (o *option) Execute() error {
-	fmt.Fprintln(o.writer, "state called")
+	fmt.Fprintln(o.writer, "delete called")
 	return nil
 }
 
@@ -71,9 +71,9 @@ func NewCMD() *cobra.Command {
 			WithPrinter(printer.NewYAML()),
 	}
 	cmd := &cobra.Command{
-		Use:   "state",
-		Short: "Request the container state.",
-		Long:  `Request the container state.`,
+		Use:   "delete",
+		Short: "Release container resources after the container process has exited.",
+		Long:  `Release container resources after the container process has exited.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return aeCMD.Run(o, cmd, args)
 		},

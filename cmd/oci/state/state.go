@@ -28,7 +28,7 @@
  *                                                                            *
 \* -------------------------------------------------------------------------- */
 
-package oci_kill
+package state
 
 import (
 	"fmt"
@@ -56,7 +56,7 @@ func (o *option) Validate() error {
 }
 
 func (o *option) Execute() error {
-	fmt.Fprintln(o.writer, "kill called")
+	fmt.Fprintln(o.writer, "state called")
 	return nil
 }
 
@@ -71,9 +71,9 @@ func NewCMD() *cobra.Command {
 			WithPrinter(printer.NewYAML()),
 	}
 	cmd := &cobra.Command{
-		Use:   "kill",
-		Short: "Send a signal to the container process.",
-		Long:  `Send a signal to the container process.`,
+		Use:   "state",
+		Short: "Request the container state.",
+		Long:  `Request the container state.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return aeCMD.Run(o, cmd, args)
 		},
