@@ -31,18 +31,19 @@
 package oci
 
 import (
+	"fmt"
 	"io"
 
 	aeCMD "github.com/aurae-runtime/ae/cmd"
-	"github.com/aurae-runtime/ae/opt"
-	"github.com/aurae-runtime/ae/output"
+	"github.com/aurae-runtime/ae/pkg/cli"
+	"github.com/aurae-runtime/ae/pkg/cli/printer"
 	"github.com/spf13/cobra"
 )
 
 type option struct {
 	aeCMD.Option
-	opt.OutputOption
-	writer io.Writer
+	writer       io.Writer
+	outputFormat *cli.OutputFormat
 }
 
 func (o *option) Complete(_ []string) error {
@@ -50,11 +51,13 @@ func (o *option) Complete(_ []string) error {
 }
 
 func (o *option) Validate() error {
+	o.outputFormat.Validate()
 	return nil
 }
 
 func (o *option) Execute() error {
-	return output.HandleString(o.writer, "start called")
+	fmt.Fprintln(o.writer, "start called")
+	return nil
 }
 
 func (o *option) SetWriter(writer io.Writer) {
@@ -62,7 +65,11 @@ func (o *option) SetWriter(writer io.Writer) {
 }
 
 func NewCMD() *cobra.Command {
-	o := &option{}
+	o := &option{
+		outputFormat: cli.NewOutputFormat().
+			WithPrinter(printer.NewJSON()).
+			WithPrinter(printer.NewYAML()),
+	}
 	cmd := &cobra.Command{
 		Use:   "start",
 		Short: "Start the user-specified code from process.",
@@ -71,14 +78,7 @@ func NewCMD() *cobra.Command {
 			return aeCMD.Run(o, cmd, args)
 		},
 	}
-	// Here you will define your flags and configuration settings.
+	o.outputFormat.AddFlags(cmd)
 
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// startCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// startCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	return cmd
 }

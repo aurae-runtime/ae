@@ -31,6 +31,7 @@
 package oci
 
 import (
+	"fmt"
 	"io"
 
 	aeCMD "github.com/aurae-runtime/ae/cmd"
@@ -39,14 +40,11 @@ import (
 	ociKill "github.com/aurae-runtime/ae/cmd/oci/kill"
 	ociStart "github.com/aurae-runtime/ae/cmd/oci/start"
 	ociState "github.com/aurae-runtime/ae/cmd/oci/state"
-	"github.com/aurae-runtime/ae/opt"
-	"github.com/aurae-runtime/ae/output"
 	"github.com/spf13/cobra"
 )
 
 type option struct {
 	aeCMD.Option
-	opt.OutputOption
 	writer io.Writer
 }
 
@@ -59,7 +57,8 @@ func (o *option) Validate() error {
 }
 
 func (o *option) Execute() error {
-	return output.HandleString(o.writer, "oci called")
+	fmt.Fprintln(o.writer, "oci called")
+	return nil
 }
 
 func (o *option) SetWriter(writer io.Writer) {
@@ -76,15 +75,7 @@ func NewCMD() *cobra.Command {
 			return aeCMD.Run(o, cmd, args)
 		},
 	}
-	// Here you will define your flags and configuration settings.
 
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// startCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// startCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	cmd.AddCommand(ociCreate.NewCMD())
 	cmd.AddCommand(ociDelete.NewCMD())
 	cmd.AddCommand(ociKill.NewCMD())

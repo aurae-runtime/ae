@@ -31,18 +31,19 @@
 package oci_create
 
 import (
+	"fmt"
 	"io"
 
 	aeCMD "github.com/aurae-runtime/ae/cmd"
-	"github.com/aurae-runtime/ae/opt"
-	"github.com/aurae-runtime/ae/output"
+	"github.com/aurae-runtime/ae/pkg/cli"
+	"github.com/aurae-runtime/ae/pkg/cli/printer"
 	"github.com/spf13/cobra"
 )
 
 type option struct {
 	aeCMD.Option
-	opt.OutputOption
-	writer io.Writer
+	writer       io.Writer
+	outputFormat *cli.OutputFormat
 }
 
 func (o *option) Complete(_ []string) error {
@@ -50,11 +51,13 @@ func (o *option) Complete(_ []string) error {
 }
 
 func (o *option) Validate() error {
+	o.outputFormat.Validate()
 	return nil
 }
 
 func (o *option) Execute() error {
-	return output.HandleString(o.writer, "create called")
+	fmt.Fprintln(o.writer, "create called")
+	return nil
 }
 
 func (o *option) SetWriter(writer io.Writer) {
@@ -62,7 +65,11 @@ func (o *option) SetWriter(writer io.Writer) {
 }
 
 func NewCMD() *cobra.Command {
-	o := &option{}
+	o := &option{
+		outputFormat: cli.NewOutputFormat().
+			WithPrinter(printer.NewJSON()).
+			WithPrinter(printer.NewYAML()),
+	}
 	cmd := &cobra.Command{
 		Use:   "create",
 		Short: "Create a container from a bundle directory.",
@@ -71,7 +78,7 @@ func NewCMD() *cobra.Command {
 			return aeCMD.Run(o, cmd, args)
 		},
 	}
-	// add flags here
+	o.outputFormat.AddFlags(cmd)
 
 	return cmd
 }
