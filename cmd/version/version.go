@@ -58,6 +58,7 @@ func (o *option) Complete(_ []string) error {
 }
 
 func (o *option) Validate() error {
+	o.outputFormat.Validate()
 	return nil
 }
 
