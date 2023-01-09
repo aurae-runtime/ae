@@ -47,7 +47,7 @@ type Suite struct {
 func ExecuteSuiteTest(t *testing.T, newCMD func() *cobra.Command, suites []Suite) {
 	for _, test := range suites {
 		t.Run(test.Title, func(t *testing.T) {
-			buffer := bytes.NewBufferString("")
+			buffer := &bytes.Buffer{}
 			cmd := newCMD()
 			cmd.SetOut(buffer)
 			cmd.SetErr(buffer)
