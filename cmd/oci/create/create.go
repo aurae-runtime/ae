@@ -28,7 +28,7 @@
  *                                                                            *
 \* -------------------------------------------------------------------------- */
 
-package oci
+package create
 
 import (
 	"fmt"
@@ -56,7 +56,7 @@ func (o *option) Validate() error {
 }
 
 func (o *option) Execute() error {
-	fmt.Fprintln(o.writer, "start called")
+	fmt.Fprintln(o.writer, "create called")
 	return nil
 }
 
@@ -71,9 +71,9 @@ func NewCMD() *cobra.Command {
 			WithPrinter(printer.NewYAML()),
 	}
 	cmd := &cobra.Command{
-		Use:   "start",
-		Short: "Start the user-specified code from process.",
-		Long:  `Start the user-specified code from process.`,
+		Use:   "create",
+		Short: "Create a container from a bundle directory.",
+		Long:  `Create a container from a bundle directory.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return aeCMD.Run(o, cmd, args)
 		},

@@ -28,7 +28,7 @@
  *                                                                            *
 \* -------------------------------------------------------------------------- */
 
-package oci_delete
+package start
 
 import (
 	"fmt"
@@ -56,7 +56,7 @@ func (o *option) Validate() error {
 }
 
 func (o *option) Execute() error {
-	fmt.Fprintln(o.writer, "delete called")
+	fmt.Fprintln(o.writer, "start called")
 	return nil
 }
 
@@ -71,9 +71,9 @@ func NewCMD() *cobra.Command {
 			WithPrinter(printer.NewYAML()),
 	}
 	cmd := &cobra.Command{
-		Use:   "delete",
-		Short: "Release container resources after the container process has exited.",
-		Long:  `Release container resources after the container process has exited.`,
+		Use:   "start",
+		Short: "Start the user-specified code from process.",
+		Long:  `Start the user-specified code from process.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return aeCMD.Run(o, cmd, args)
 		},

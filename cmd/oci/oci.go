@@ -35,11 +35,11 @@ import (
 	"io"
 
 	aeCMD "github.com/aurae-runtime/ae/cmd"
-	ociCreate "github.com/aurae-runtime/ae/cmd/oci/create"
-	ociDelete "github.com/aurae-runtime/ae/cmd/oci/delete"
-	ociKill "github.com/aurae-runtime/ae/cmd/oci/kill"
-	ociStart "github.com/aurae-runtime/ae/cmd/oci/start"
-	ociState "github.com/aurae-runtime/ae/cmd/oci/state"
+	"github.com/aurae-runtime/ae/cmd/oci/create"
+	"github.com/aurae-runtime/ae/cmd/oci/delete"
+	"github.com/aurae-runtime/ae/cmd/oci/kill"
+	"github.com/aurae-runtime/ae/cmd/oci/start"
+	"github.com/aurae-runtime/ae/cmd/oci/state"
 	"github.com/spf13/cobra"
 )
 
@@ -76,11 +76,11 @@ func NewCMD() *cobra.Command {
 		},
 	}
 
-	cmd.AddCommand(ociCreate.NewCMD())
-	cmd.AddCommand(ociDelete.NewCMD())
-	cmd.AddCommand(ociKill.NewCMD())
-	cmd.AddCommand(ociStart.NewCMD())
-	cmd.AddCommand(ociState.NewCMD())
+	cmd.AddCommand(create.NewCMD())
+	cmd.AddCommand(delete.NewCMD())
+	cmd.AddCommand(kill.NewCMD())
+	cmd.AddCommand(start.NewCMD())
+	cmd.AddCommand(state.NewCMD())
 
 	return cmd
 }
