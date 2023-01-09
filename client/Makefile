@@ -28,60 +28,39 @@
 #                                                                              #
 # ---------------------------------------------------------------------------- #
 
-GORELEASER_FLAGS ?= --snapshot --rm-dist
-all: compile
+all: test
 
-# Variables and Settings
-version     ?=  0.0.1
-target      ?=  ae
-org         ?=  aurae-runtime
-authorname  ?=  The Aurae Authors
-authoremail ?=  info@aurae.io
-license     ?=  Apache2
-year        ?=  2023
-copyright   ?=  Copyright (c) $(year)
+.PHONY: proto
+proto: ## Generate code from protobuf schemas
+	@buf --version >/dev/null 2>&1 || (echo "Warning: buf is not installed! Please install the 'buf' command line tool: https://docs.buf.build/installation"; exit 1)
+	buf generate -v https://github.com/aurae-runtime/aurae.git#branch=main,subdir=api
 
-COMMIT      := $(shell git rev-parse HEAD)
-DATE        := $(shell date +%Y-%m-%d)
-PKG_LDFLAGS := github.com/prometheus/common/version
-
-compile: mod ## Compile for the local architecture ⚙
-	@echo "Compiling..."
-	go build -ldflags "\
-	-X 'main.Version=$(version)' \
-	-X 'main.AuthorName=$(authorname)' \
-	-X 'main.AuthorEmail=$(authoremail)' \
-	-X 'main.Copyright=$(copyright)' \
-	-X 'main.License=$(license)' \
-	-X 'main.Name=$(target)' \
-	-X '${PKG_LDFLAGS}.Version=$(version)' \
-	-X '${PKG_LDFLAGS}.BuildDate=$(DATE)' \
-	-X '${PKG_LDFLAGS}.Revision=$(COMMIT)'" \
-	-o bin/$(target) .
-
-.PHONY: goreleaser
-goreleaser: ## Run goreleaser directly at the pinned version 🛠
-	go run github.com/goreleaser/goreleaser@v1.14 $(GORELEASER_FLAGS)
-
+.PHONY: mod
 mod: ## Go mod things
 	go mod tidy
 	go mod vendor
 	go mod download
 
-install: ## Install the program to /usr/bin 🎉
-	@echo "Installing..."
-	sudo cp bin/$(target) /usr/bin/$(target)
-
-test: clean compile install ## 🤓 Run go tests
+.PHONY: test
+test: clean proto ## 🤓 Run go tests
 	@echo "Testing..."
 	go test -v ./...
 
+.PHONY: fmt
+fmt:
+	@gofumpt -version >/dev/null 2>&1 || (echo "Warning: gofumpt is not installed! Please install the 'gofumpt' command line tool: https://pkg.go.dev/mvdan.cc/gofumpt"; exit 1)
+	gofumpt -l -w .
+
+.PHONY: lint
+lint: fmt ## Linting the code according to the styling guide.
+	@golangci-lint --version >/dev/null 2>&1 || (echo "Warning: golangci-lint is not installed! Please install the 'golangci-lint' command line tool: https://golangci-lint.run/usage/install/"; exit 1)
+	golangci-lint run -c .golangci.yaml
+
+.PHONY: clean
 clean: ## Clean your artifacts 🧼
 	@echo "Cleaning..."
-	rm -rvf dist/*
-	rm -rvf release/*
+	rm -rvf pkg/api/
 
 .PHONY: help
 help:  ## Show help messages for make targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(firstword $(MAKEFILE_LIST)) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}'
-
