@@ -38,15 +38,14 @@ import (
 	free "github.com/aurae-runtime/ae/cmd/runtime/free"
 	start "github.com/aurae-runtime/ae/cmd/runtime/start"
 	stop "github.com/aurae-runtime/ae/cmd/runtime/stop"
-	"github.com/aurae-runtime/ae/opt"
-	"github.com/aurae-runtime/ae/output"
+	"github.com/aurae-runtime/ae/pkg/cli"
 	"github.com/spf13/cobra"
 )
 
 type option struct {
 	aeCMD.Option
-	opt.OutputOption
-	writer io.Writer
+	outputFormat *cli.OutputFormat
+	writer       io.Writer
 }
 
 func (o *option) Complete(_ []string) error {
@@ -58,7 +57,7 @@ func (o *option) Validate() error {
 }
 
 func (o *option) Execute() error {
-	return output.HandleString(o.writer, "runtime called")
+	return o.outputFormat.ToPrinter().Print(o.writer, "runtime called")
 }
 
 func (o *option) SetWriter(writer io.Writer) {
