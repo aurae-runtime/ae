@@ -46,26 +46,19 @@ func TestVersionCMD(t *testing.T) {
 			Title:           "empty args",
 			Args:            []string{},
 			IsErrorExpected: false,
-			ExpectedMessage: `buildTime: "2023-01-07"
-version: v0.1.0
-commit: a7c46aa017bc447ece506629196bd0548cbbc469
-
-`,
-		},
-		{
-			Title:           "print version in json",
-			Args:            []string{"--output", "json"},
-			IsErrorExpected: false,
-			ExpectedMessage: `{"buildTime":"2023-01-07","version":"v0.1.0","commit":"a7c46aa017bc447ece506629196bd0548cbbc469"}
-`,
+			ExpectedMessage: `{
+    "buildTime": "2023-01-07",
+    "version": "v0.1.0",
+    "commit": "a7c46aa017bc447ece506629196bd0548cbbc469"
+}`,
 		},
 		{
 			Title:           "print short version",
 			Args:            []string{"--short"},
 			IsErrorExpected: false,
-			ExpectedMessage: `version: v0.1.0
-
-`,
+			ExpectedMessage: `{
+    "version": "v0.1.0"
+}`,
 		},
 	}
 	cmdTest.ExecuteSuiteTest(t, NewCMD, testSuite)

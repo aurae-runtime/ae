@@ -24,7 +24,6 @@ func (printer *JSON) Print(w io.Writer, obj any) error {
 		return err
 	}
 
-	data = append(data, '\n')
 	_, err = w.Write(data)
 	return err
 }
