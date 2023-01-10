@@ -57,14 +57,14 @@ func ExecuteSuiteTest(t *testing.T, newCMD func() *cobra.Command, suites []Suite
 			if test.IsErrorExpected {
 				if !IsNil(err) {
 					if !IsEqualString(test.ExpectedMessage, err.Error()) {
-						t.Errorf("\nError message of command \"%s\" was incorrect, got: \n%s\nwant: \n%s.", test.Title, err.Error(), test.ExpectedMessage)
+						t.Errorf("\nError message of command %q was incorrect, got: \n%s\nwant: \n%s", test.Title, err.Error(), test.ExpectedMessage)
 					}
 				} else {
-					t.Errorf("\nError in command \"%s\" expected.", test.Title)
+					t.Errorf("\nError in command %q expected.", test.Title)
 				}
 			} else if IsNil(err) {
 				if !IsEqualString(test.ExpectedMessage, buffer.String()) {
-					t.Errorf("\nTest of command \"%s\" was incorrect, got: \n%swant: \n%s.", test.Title, buffer.String(), test.ExpectedMessage)
+					t.Errorf("\nTest of command %q was incorrect, got: \n%s\nwant: \n%s", test.Title, buffer.String(), test.ExpectedMessage)
 				}
 			}
 		})
