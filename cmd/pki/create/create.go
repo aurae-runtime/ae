@@ -28,30 +28,24 @@
  *                                                                            *
 \* -------------------------------------------------------------------------- */
 
-package pki_create
+package create
 
 import (
 	"fmt"
 	"io"
 
 	aeCMD "github.com/aurae-runtime/ae/cmd"
-	"github.com/aurae-runtime/ae/opt"
+	"github.com/aurae-runtime/ae/pkg/cli"
 	"github.com/aurae-runtime/ae/pkg/pki"
 	"github.com/spf13/cobra"
 )
 
-type outputVersion struct {
-	BuildTime string `json:"buildTime,omitempty" yaml:"buildTime,omitempty"`
-	Version   string `json:"version" yaml:"version"`
-	Commit    string `json:"commit,omitempty" yaml:"commit,omitempty"`
-}
-
 type option struct {
 	aeCMD.Option
-	opt.OutputOption
-	directory string
-	domain    string
-	writer    io.Writer
+	outputFormat *cli.OutputFormat
+	directory    string
+	domain       string
+	writer       io.Writer
 }
 
 func (o *option) Complete(args []string) error {
@@ -86,8 +80,8 @@ func NewCMD() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create",
 		Short: "Creates a CA for auraed.",
-		Example: `ae create my.domain.com
-ae create --dir ./pki/ my.domain.com`,
+		Example: `ae pki create my.domain.com
+ae pki create --dir ./pki/ my.domain.com`,
 
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return aeCMD.Run(o, cmd, args)
