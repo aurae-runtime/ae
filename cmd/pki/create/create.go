@@ -66,7 +66,10 @@ func (o *option) Validate() error {
 }
 
 func (o *option) Execute() error {
-	pki.CreateRootCA(o.directory, o.domain)
+	err := pki.CreateAuraeRootCA(o.directory, o.domain)
+	if err != nil {
+		return fmt.Errorf("failed to create aurae root ca: %w", err)
+	}
 
 	return nil
 }
