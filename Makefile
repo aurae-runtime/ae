@@ -87,9 +87,8 @@ help:  ## Show help messages for make targets
 
 format: ## Format the code using gofmt
 	@echo "Formatting..."
-	gofmt -s -w .    
+	@gofmt -s -w .    
 
-format-check: ## Used by CI to check if code is formatted
-	ifneq ($(shell gofmt -s -l . | wc -l),0)
-		$(error Go code is not formatted, please run 'make format' on your code)
-	endif
+check-format: ## Used by CI to check if code is formatted
+	@gofmt -l $(shell find . -name '*.go' -not -path "./vendor/*") | grep ".*" ; if [ $$? -eq 0 ]; then exit 1; fi
+
