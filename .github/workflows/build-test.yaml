@@ -30,4 +30,4 @@ jobs:
           cache: true
 
       - name: Run formatting
-        run: make format-check
+        run: make check-format
