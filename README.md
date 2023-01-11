@@ -8,7 +8,7 @@ Contributions and newcomers to the project are welcome. Please see [Getting Invo
 
 ## Commands
 
-```bash 
+```bash
 ae oci
 ae oci create
 ae oci delete
@@ -19,14 +19,13 @@ ae oci status
 
 Implements the [OCI Command Line](https://github.com/opencontainers/runtime-tools/blob/master/docs/command-line-interface.md) interface with associated subcommands.
 
-
 ```bash
 ae allocate
 ae allocate cell
 ae allocate pod
 ```
 
-Reserve resources, and manage any prerequisites but do not start. Will fail if resources are unavailable. 
+Reserve resources, and manage any prerequisites but do not start. Will fail if resources are unavailable.
 
 ```bash
 ae free
@@ -56,4 +55,10 @@ Logs
 ae logs <options>
 ```
 
-Stop a resource immediately. 
+Stop a resource immediately.
+
+## Code Quality
+
+### Linting
+
+We are using the (golangci-lint)[https://golangci-lint.run/] tool to lint the code. You will need to install it for your system, and can find instructions at (this link)[https://golangci-lint.run/usage/install/]. This tool runs on every pull request, and it must pass before merging is allowed.
