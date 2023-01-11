@@ -97,6 +97,7 @@ ae pki create --dir ./pki/ my.domain.com`,
 		},
 	}
 
+	o.outputFormat.AddFlags(cmd)
 	cmd.Flags().StringVarP(&o.directory, "dir", "d", o.directory, "Output directory to store CA files.")
 
 	return cmd
