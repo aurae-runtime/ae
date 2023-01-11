@@ -92,3 +92,5 @@ format: ## Format the code using gofmt
 check-format: ## Used by CI to check if code is formatted
 	@gofmt -l $(shell find . -name '*.go' -not -path "./vendor/*") | grep ".*" ; if [ $$? -eq 0 ]; then exit 1; fi
 
+lint: ## Runs the linter
+	golangci-lint run
