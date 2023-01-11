@@ -35,14 +35,12 @@ import (
 
 	aeCMD "github.com/aurae-runtime/ae/cmd"
 	pki_create "github.com/aurae-runtime/ae/cmd/pki/create"
-	"github.com/aurae-runtime/ae/pkg/cli"
 	"github.com/spf13/cobra"
 )
 
 type option struct {
 	aeCMD.Option
-	outputFormat *cli.OutputFormat
-	writer       io.Writer
+	writer io.Writer
 }
 
 func (o *option) Complete(args []string) error {
