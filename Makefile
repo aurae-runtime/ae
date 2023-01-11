@@ -85,3 +85,11 @@ clean: ## Clean your artifacts 🧼
 help:  ## Show help messages for make targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(firstword $(MAKEFILE_LIST)) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}'
 
+format: ## Format the code using gofmt
+	@echo "Formatting..."
+	gofmt -s -w .    
+
+format-check: ## Used by CI to check if code is formatted
+	ifneq ($(shell gofmt -s -l . | wc -l),0)
+		$(error Go code is not formatted, please run 'make format' on your code)
+	endif
