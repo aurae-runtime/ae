@@ -31,6 +31,7 @@
 package pki
 
 import (
+	"bytes"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha1"
@@ -44,17 +45,16 @@ import (
 	"time"
 )
 
-func CreateAuraeRootCA(path string, domainName string) error {
-	path = filepath.Clean(path)
+type AuraeCA struct {
+	Certificate string `json:"cert" yaml:"cert"`
+	Key         string `json:"key" yaml:"key"`
+}
 
-	if path != "" {
-		err := os.MkdirAll(path, os.ModePerm)
-		if err != nil {
-			return fmt.Errorf("failed to create output directory: %w", err)
-		}
+func CreateAuraeRootCA(path string, domainName string) (*AuraeCA, error) {
+	priv, err := rsa.GenerateKey(rand.Reader, 2048)
+	if err != nil {
+		return &AuraeCA{}, fmt.Errorf("failed to generate private key: %w", err)
 	}
-	crtPath := filepath.Join(path, "ca.crt")
-	keyPath := filepath.Join(path, "ca.key")
 
 	template := x509.Certificate{}
 	template.Subject = pkix.Name{
@@ -71,14 +71,10 @@ func CreateAuraeRootCA(path string, domainName string) error {
 	template.BasicConstraintsValid = true
 	template.DNSNames = []string{domainName}
 
-	priv, err := rsa.GenerateKey(rand.Reader, 2048)
-	if err != nil {
-		return fmt.Errorf("failed to generate private key: %w", err)
-	}
 	serialNumberLimit := new(big.Int).Lsh(big.NewInt(1), 128)
 	template.SerialNumber, err = rand.Int(rand.Reader, serialNumberLimit)
 	if err != nil {
-		return fmt.Errorf("failed to generate serial number: %w", err)
+		return &AuraeCA{}, fmt.Errorf("failed to generate serial number: %w", err)
 	}
 
 	// To get an AuthorityKeyId which is equal to SubjectKeyId, we are manually
@@ -100,29 +96,94 @@ func CreateAuraeRootCA(path string, domainName string) error {
 
 	derBytes, err := x509.CreateCertificate(rand.Reader, &template, &template, &priv.PublicKey, priv)
 	if err != nil {
-		return fmt.Errorf("failed to create certificate: %w", err)
+		return &AuraeCA{}, fmt.Errorf("failed to create certificate: %w", err)
 	}
 
-	certOut, err := os.Create(crtPath)
+	certBuf, err := getCertBuf(derBytes)
 	if err != nil {
-		return fmt.Errorf("failed to open ca.pem for writing: %w", err)
+		return &AuraeCA{}, err
 	}
-	pem.Encode(certOut, &pem.Block{
+	keyBuf, err := getKeyBuf(priv)
+	if err != nil {
+		return &AuraeCA{}, err
+	}
+
+	ca := &AuraeCA{
+		Certificate: certBuf.String(),
+		Key:         keyBuf.String(),
+	}
+
+	if path != "" {
+		err = createCAFiles(path, ca)
+		if err != nil {
+			return ca, err
+		}
+	}
+
+	return ca, nil
+}
+
+func createCAFiles(path string, ca *AuraeCA) error {
+	path = filepath.Clean(path)
+	err := os.MkdirAll(path, os.ModePerm)
+	if err != nil {
+		return fmt.Errorf("failed to create output directory: %w", err)
+	}
+
+	crtPath := filepath.Join(path, "ca.crt")
+	keyPath := filepath.Join(path, "ca.key")
+
+	err = writeStringToFile(crtPath, ca.Certificate)
+	if err != nil {
+		return err
+	}
+
+	err = writeStringToFile(keyPath, ca.Key)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func writeStringToFile(p string, s string) error {
+	f, err := os.OpenFile(p, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o600)
+	if err != nil {
+		return fmt.Errorf("failed to open file %s: %w", p, err)
+	}
+	defer f.Close()
+
+	_, err = f.WriteString(s)
+	if err != nil {
+		return fmt.Errorf("failed to write file %s: %w", p, err)
+	}
+
+	return nil
+}
+
+func getCertBuf(derBytes []byte) (*bytes.Buffer, error) {
+	var certBytes []byte
+	certBuf := bytes.NewBuffer(certBytes)
+	err := pem.Encode(certBuf, &pem.Block{
 		Type:  "CERTIFICATE",
 		Bytes: derBytes,
 	})
-	certOut.Close()
-
-	keyOut, err := os.OpenFile(keyPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o600)
 	if err != nil {
-		return fmt.Errorf("failed to open ca.key for writing: %w", err)
+		return &bytes.Buffer{}, fmt.Errorf("failed to write certificate buffer: %w", err)
 	}
-	pem.Encode(keyOut, &pem.Block{
+
+	return certBuf, nil
+}
+
+func getKeyBuf(priv *rsa.PrivateKey) (*bytes.Buffer, error) {
+	var keyBytes []byte
+	keyBuf := bytes.NewBuffer(keyBytes)
+	err := pem.Encode(keyBuf, &pem.Block{
 		Type:  "RSA PRIVATE KEY",
 		Bytes: x509.MarshalPKCS1PrivateKey(priv),
 	})
-	keyOut.Close()
+	if err != nil {
+		return &bytes.Buffer{}, fmt.Errorf("failed to write private key buffer: %w", err)
+	}
 
-	fmt.Printf("Created root ca for domain \"%s\" \n\t%s\n\t%s\n", domainName, crtPath, keyPath)
-	return nil
+	return keyBuf, nil
 }

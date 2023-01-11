@@ -36,6 +36,7 @@ import (
 
 	aeCMD "github.com/aurae-runtime/ae/cmd"
 	"github.com/aurae-runtime/ae/pkg/cli"
+	"github.com/aurae-runtime/ae/pkg/cli/printer"
 	"github.com/aurae-runtime/ae/pkg/pki"
 	"github.com/spf13/cobra"
 )
@@ -66,11 +67,11 @@ func (o *option) Validate() error {
 }
 
 func (o *option) Execute() error {
-	err := pki.CreateAuraeRootCA(o.directory, o.domain)
+	rootCA, err := pki.CreateAuraeRootCA(o.directory, o.domain)
 	if err != nil {
 		return fmt.Errorf("failed to create aurae root ca: %w", err)
 	}
-
+	o.outputFormat.ToPrinter().Print(o.writer, &rootCA)
 	return nil
 }
 
@@ -79,7 +80,12 @@ func (o *option) SetWriter(writer io.Writer) {
 }
 
 func NewCMD() *cobra.Command {
-	o := &option{}
+	o := &option{
+		outputFormat: cli.NewOutputFormat().
+			WithDefaultFormat(printer.NewJSON().Format()).
+			WithPrinter(printer.NewJSON()).
+			WithPrinter(printer.NewYAML()),
+	}
 	cmd := &cobra.Command{
 		Use:   "create",
 		Short: "Creates a CA for auraed.",
