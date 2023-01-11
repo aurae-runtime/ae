@@ -42,7 +42,7 @@ func TestOutputFormatAddFlags(t *testing.T) {
 		cmd.SetErr(buf)
 		cmd.SetArgs(test.input)
 
-		if err :=cmd.Execute(); err != nil {
+		if err := cmd.Execute(); err != nil {
 			t.Errorf("%s: errored. Got: %s", test.name, buf.String())
 		}
 
