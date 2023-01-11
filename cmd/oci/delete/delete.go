@@ -52,7 +52,7 @@ func (o *option) Complete(_ []string) error {
 
 func (o *option) Validate() error {
 	if err := o.outputFormat.Validate(); err != nil {
-        return err
+		return err
 	}
 	return nil
 }
