@@ -46,6 +46,7 @@ type option struct {
 	outputFormat *cli.OutputFormat
 	directory    string
 	domain       string
+	silent       bool
 	writer       io.Writer
 }
 
@@ -71,7 +72,9 @@ func (o *option) Execute() error {
 	if err != nil {
 		return fmt.Errorf("failed to create aurae root ca: %w", err)
 	}
-	o.outputFormat.ToPrinter().Print(o.writer, &rootCA)
+	if !o.silent {
+		o.outputFormat.ToPrinter().Print(o.writer, &rootCA)
+	}
 	return nil
 }
 
@@ -85,6 +88,7 @@ func NewCMD() *cobra.Command {
 			WithDefaultFormat(printer.NewJSON().Format()).
 			WithPrinter(printer.NewJSON()).
 			WithPrinter(printer.NewYAML()),
+		silent: false,
 	}
 	cmd := &cobra.Command{
 		Use:   "create",
@@ -99,6 +103,7 @@ ae pki create --dir ./pki/ my.domain.com`,
 
 	o.outputFormat.AddFlags(cmd)
 	cmd.Flags().StringVarP(&o.directory, "dir", "d", o.directory, "Output directory to store CA files.")
+	cmd.Flags().BoolVarP(&o.silent, "silent", "s", o.silent, "Silent mode, omits output")
 
 	return cmd
 }
