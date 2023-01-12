@@ -96,4 +96,4 @@ lint: ## Runs the linter
 	golangci-lint run
 
 check-editorconfig: ## Use to check if the codebase follows editorconfig rules
-	@docker run --rm --volume=$PWD:/check mstruebing/editorconfig-checker
+	@docker run --rm --volume=$(shell PWD):/check mstruebing/editorconfig-checker

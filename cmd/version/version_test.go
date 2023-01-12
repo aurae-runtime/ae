@@ -47,7 +47,7 @@ func TestVersionCMD(t *testing.T) {
 			Args:            []string{},
 			IsErrorExpected: false,
 			ExpectedMessage: `{
-    "buildTime": "2023-01-07",
+` + `    "buildTime": "2023-01-07",
 ` + `    "version": "v0.1.0",
 ` + `    "commit": "a7c46aa017bc447ece506629196bd0548cbbc469"
 }`,
@@ -57,7 +57,7 @@ func TestVersionCMD(t *testing.T) {
 			Args:            []string{"--short"},
 			IsErrorExpected: false,
 			ExpectedMessage: `{
-    "version": "v0.1.0"
+` + `    "version": "v0.1.0"` + `
 }`,
 		},
 	}
