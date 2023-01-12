@@ -34,7 +34,7 @@ import (
 	"os"
 
 	"github.com/aurae-runtime/ae/cmd/oci"
-	pki "github.com/aurae-runtime/ae/cmd/pki"
+	"github.com/aurae-runtime/ae/cmd/pki"
 	"github.com/aurae-runtime/ae/cmd/version"
 	"github.com/spf13/cobra"
 )
