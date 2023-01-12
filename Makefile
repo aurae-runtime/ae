@@ -94,3 +94,6 @@ check-format: ## Used by CI to check if code is formatted
 
 lint: ## Runs the linter
 	golangci-lint run
+
+check-editorconfig: ## Use to check if the codebase follows editorconfig rules
+	@docker run --rm --volume=$PWD:/check mstruebing/editorconfig-checker

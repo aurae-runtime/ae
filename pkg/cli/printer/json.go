@@ -19,7 +19,7 @@ func (printer *JSON) Format() string {
 }
 
 func (printer *JSON) Print(w io.Writer, obj any) error {
-	data, err := json.MarshalIndent(obj, "", "    ")
+	data, err := json.MarshalIndent(obj, "", "	")
 	if err != nil {
 		return err
 	}

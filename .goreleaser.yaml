@@ -91,4 +91,4 @@ changelog:
 #   image_templates:
 #   - aurae-runtime/ae:{{ .Version }}-amd64
 #   - aurae-runtime/ae:{{ .Version }}-arm64v8
-  
+
