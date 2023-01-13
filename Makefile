@@ -63,19 +63,23 @@ compile: mod ## Compile for the local architecture ⚙
 goreleaser: ## Run goreleaser directly at the pinned version 🛠
 	go run github.com/goreleaser/goreleaser@v1.14 $(GORELEASER_FLAGS)
 
+.PHONY: mod
 mod: ## Go mod things
 	go mod tidy
 	go mod vendor
 	go mod download
 
-install: ## Install the program to /usr/bin 🎉
+.PHONY: install
+install: compile ## Install the program to /usr/bin 🎉
 	@echo "Installing..."
 	sudo cp bin/$(target) /usr/local/bin/$(target)
 
-test: clean compile install ## 🤓 Run go tests
+.PHONY: test
+test: compile ## 🤓 Run go tests
 	@echo "Testing..."
 	go test -v ./...
 
+.PHONY: clean
 clean: ## Clean your artifacts 🧼
 	@echo "Cleaning..."
 	rm -rvf dist/*
@@ -85,15 +89,19 @@ clean: ## Clean your artifacts 🧼
 help:  ## Show help messages for make targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(firstword $(MAKEFILE_LIST)) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}'
 
+.PHONY: format
 format: ## Format the code using gofmt
 	@echo "Formatting..."
 	@gofmt -s -w $(shell find . -name '*.go' -not -path "./vendor/*")
 
+.PHONY: check-format
 check-format: ## Used by CI to check if code is formatted
 	@gofmt -l $(shell find . -name '*.go' -not -path "./vendor/*") | grep ".*" ; if [ $$? -eq 0 ]; then exit 1; fi
 
+.PHONY: lint
 lint: ## Runs the linter
 	golangci-lint run
 
+.PHONY: check-editorconfig
 check-editorconfig: ## Use to check if the codebase follows editorconfig rules
 	@docker run --rm --volume=$(shell PWD):/check mstruebing/editorconfig-checker
