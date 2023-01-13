@@ -36,6 +36,7 @@ import (
 	"io"
 	"log"
 	"net"
+	"strings"
 
 	"github.com/aurae-runtime/ae/pkg/cli"
 	"github.com/aurae-runtime/ae/pkg/cli/printer"
@@ -74,11 +75,14 @@ func hosts(cidr string) ([]string, error) {
 	for ip := ip.Mask(ipnet.Mask); ipnet.Contains(ip); inc(ip) {
 		ips = append(ips, ip.String())
 	}
-	if len(ips) < 2 {
-		return nil, fmt.Errorf("unexpectedly short ip list from cidr %q", cidr)
-	}
 	// remove network address and broadcast address
-	return ips[1 : len(ips)-1], nil
+	if strings.HasSuffix(ips[0], ".0") {
+		ips = ips[1:]
+	}
+	if strings.HasSuffix(ips[len(ips)-1], ".255") {
+		ips = ips[:len(ips)-1]
+	}
+	return ips, nil
 }
 
 func protocol(ip_str string) (string, error) {
