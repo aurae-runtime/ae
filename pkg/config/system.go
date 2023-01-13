@@ -2,7 +2,7 @@ package config
 
 type System struct {
 	Protocol string
-	Socket string
+	Socket   string
 }
 
 func (s System) Set(cfg *Configs) error {

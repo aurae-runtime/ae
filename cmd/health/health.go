@@ -53,7 +53,7 @@ type outputHealthNode struct {
 }
 
 type outputHealth struct {
-	Nodes	map[string]outputHealthNode `json:"nodes"`
+	Nodes map[string]outputHealthNode `json:"nodes"`
 }
 
 func inc(ip net.IP) {
@@ -90,19 +90,19 @@ func protocol(ip_str string) (string, error) {
 	if ip == nil {
 		return "", fmt.Errorf("unable to parse IP %q", ip_str)
 	}
-	protocol := "tcp4";
+	protocol := "tcp4"
 	if ip.To4() == nil {
-		protocol = "tcp6";
+		protocol = "tcp6"
 	}
 	return protocol, nil
 }
 
 type option struct {
 	aeCMD.Option
-	cidr	string
-	port	uint16
-	verbose bool
-	writer io.Writer
+	cidr         string
+	port         uint16
+	verbose      bool
+	writer       io.Writer
 	outputFormat *cli.OutputFormat
 }
 
@@ -111,7 +111,7 @@ func (o *option) Complete(_ []string) error {
 }
 
 func (o *option) Validate() error {
-	if err:= o.outputFormat.Validate(); err != nil {
+	if err := o.outputFormat.Validate(); err != nil {
 		return err
 	}
 
@@ -138,7 +138,7 @@ func (o *option) Execute() error {
 		if err != nil {
 			return err
 		}
-		if (o.verbose) {
+		if o.verbose {
 			log.Printf("connecting to %s:%d using protocol %s\n", ip_str, o.port, p)
 		}
 		c, err := client.New(ctx, config.WithSystem(config.System{Protocol: p, Socket: fmt.Sprintf("%s:%d", ip_str, o.port)}))
@@ -153,7 +153,7 @@ func (o *option) Execute() error {
 
 		rsp, err := d.Health(ctx, &discoveryv0.HealthRequest{})
 		if err != nil {
-			if (o.verbose) {
+			if o.verbose {
 				log.Printf("failed to call health: %s.  not an aurae node\n", err)
 			}
 			continue
@@ -172,13 +172,13 @@ func (o *option) SetWriter(writer io.Writer) {
 }
 
 func NewCMD() *cobra.Command {
-	o := &option {
+	o := &option{
 		outputFormat: cli.NewOutputFormat().
 			WithDefaultFormat(printer.NewJSON().Format()).
 			WithPrinter(printer.NewJSON()),
 	}
 	cmd := &cobra.Command{
-		Use: "health",
+		Use:   "health",
 		Short: "Scans a cluster of nodes for healthy Aurae nodes.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return aeCMD.Run(o, cmd, args)

@@ -15,14 +15,13 @@ import (
 	"github.com/aurae-runtime/ae/pkg/discovery"
 )
 
-
 type Client interface {
 	Discovery() (discovery.Discovery, error)
 }
 
 type client struct {
-	cfg *config.Configs
-	conn grpc.ClientConnInterface
+	cfg       *config.Configs
+	conn      grpc.ClientConnInterface
 	discovery discovery.Discovery
 }
 
@@ -48,8 +47,8 @@ func New(ctx context.Context, cfg ...config.Config) (Client, error) {
 	}
 
 	return &client{
-		cfg: cf,
-		conn: conn,
+		cfg:       cf,
+		conn:      conn,
 		discovery: discovery.New(ctx, conn),
 	}, nil
 }
@@ -72,8 +71,8 @@ func loadTLSCredentials(auth config.Auth) (credentials.TransportCredentials, err
 
 	config := &tls.Config{
 		Certificates: []tls.Certificate{clientKeyPair},
-		RootCAs: certPool,
-		ServerName: auth.ServerName,
+		RootCAs:      certPool,
+		ServerName:   auth.ServerName,
 	}
 
 	return credentials.NewTLS(config), nil

@@ -1,9 +1,9 @@
 package config
 
 type Auth struct {
-	CaCert string
+	CaCert     string
 	ClientCert string
-	ClientKey string
+	ClientKey  string
 	ServerName string
 }
 

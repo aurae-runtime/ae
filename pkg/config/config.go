@@ -3,11 +3,10 @@ package config
 import (
 	"fmt"
 	"os/user"
-
 )
 
 type Configs struct {
-	Auth Auth
+	Auth   Auth
 	System System
 }
 
@@ -21,16 +20,16 @@ func Default() (*Configs, error) {
 		return nil, err
 	}
 
-	return &Configs {
+	return &Configs{
 		Auth: Auth{
-			CaCert: fmt.Sprintf("%s/.aurae/pki/ca.crt", usr.HomeDir),
+			CaCert:     fmt.Sprintf("%s/.aurae/pki/ca.crt", usr.HomeDir),
 			ClientCert: fmt.Sprintf("%s/.aurae/pki/_signed.client.nova.crt", usr.HomeDir),
-			ClientKey: fmt.Sprintf("%s/.aurae/pki/client.nova.key", usr.HomeDir),
+			ClientKey:  fmt.Sprintf("%s/.aurae/pki/client.nova.key", usr.HomeDir),
 			ServerName: "server.unsafe.aurae.io",
 		},
 		System: System{
 			Protocol: "unix",
-			Socket: "/var/run/aurae/aurae.sock",
+			Socket:   "/var/run/aurae/aurae.sock",
 		},
 	}, nil
 }
