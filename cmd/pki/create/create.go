@@ -28,37 +28,82 @@
  *                                                                            *
 \* -------------------------------------------------------------------------- */
 
-package root_cmd
+package create
 
 import (
-	"os"
+	"fmt"
+	"io"
 
-	"github.com/aurae-runtime/ae/cmd/oci"
-	"github.com/aurae-runtime/ae/cmd/pki"
-	"github.com/aurae-runtime/ae/cmd/version"
+	aeCMD "github.com/aurae-runtime/ae/cmd"
+	"github.com/aurae-runtime/ae/pkg/cli"
+	"github.com/aurae-runtime/ae/pkg/cli/printer"
+	"github.com/aurae-runtime/ae/pkg/pki"
 	"github.com/spf13/cobra"
 )
 
-var rootCmd = &cobra.Command{
-	Use:   "ae",
-	Short: "Unix inspired command line client for Aurae.\n",
-	Long:  `Unix inspired command line client for Aurae.`,
-	// TODO help by default
-	// Run: func(cmd *cobra.Command, args []string) { },
+type option struct {
+	aeCMD.Option
+	outputFormat *cli.OutputFormat
+	directory    string
+	domain       string
+	silent       bool
+	writer       io.Writer
 }
 
-func Execute() {
-	err := rootCmd.Execute()
-	if err != nil {
-		os.Exit(1)
+func (o *option) Complete(args []string) error {
+	if len(args) == 0 {
+		return fmt.Errorf("command 'create' requires a domain name as argument")
 	}
+	if len(args) > 1 {
+		return fmt.Errorf("too many arguments for command 'create', expect %d, got %d", 1, len(args))
+	}
+
+	o.domain = args[0]
+
+	return nil
 }
 
-func init() {
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+func (o *option) Validate() error {
+	return nil
+}
 
-	// add subcommands
-	rootCmd.AddCommand(oci.NewCMD())
-	rootCmd.AddCommand(version.NewCMD())
-	rootCmd.AddCommand(pki.NewCMD())
+func (o *option) Execute() error {
+	rootCA, err := pki.CreateAuraeRootCA(o.directory, o.domain)
+	if err != nil {
+		return fmt.Errorf("failed to create aurae root ca: %w", err)
+	}
+	if !o.silent {
+		o.outputFormat.ToPrinter().Print(o.writer, &rootCA)
+	}
+	return nil
+}
+
+func (o *option) SetWriter(writer io.Writer) {
+	o.writer = writer
+}
+
+func NewCMD() *cobra.Command {
+	o := &option{
+		outputFormat: cli.NewOutputFormat().
+			WithDefaultFormat(printer.NewJSON().Format()).
+			WithPrinter(printer.NewJSON()).
+			WithPrinter(printer.NewYAML()),
+		silent: false,
+	}
+	cmd := &cobra.Command{
+		Use:   "create",
+		Short: "Creates a CA for auraed.",
+		Example: `ae pki create my.domain.com
+ae pki create --dir ./pki/ my.domain.com`,
+
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return aeCMD.Run(o, cmd, args)
+		},
+	}
+
+	o.outputFormat.AddFlags(cmd)
+	cmd.Flags().StringVarP(&o.directory, "dir", "d", o.directory, "Output directory to store CA files.")
+	cmd.Flags().BoolVarP(&o.silent, "silent", "s", o.silent, "Silent mode, omits output")
+
+	return cmd
 }

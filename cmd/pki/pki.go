@@ -28,37 +28,47 @@
  *                                                                            *
 \* -------------------------------------------------------------------------- */
 
-package root_cmd
+package pki
 
 import (
-	"os"
+	"io"
 
-	"github.com/aurae-runtime/ae/cmd/oci"
-	"github.com/aurae-runtime/ae/cmd/pki"
-	"github.com/aurae-runtime/ae/cmd/version"
+	aeCMD "github.com/aurae-runtime/ae/cmd"
+	pki_create "github.com/aurae-runtime/ae/cmd/pki/create"
 	"github.com/spf13/cobra"
 )
 
-var rootCmd = &cobra.Command{
-	Use:   "ae",
-	Short: "Unix inspired command line client for Aurae.\n",
-	Long:  `Unix inspired command line client for Aurae.`,
-	// TODO help by default
-	// Run: func(cmd *cobra.Command, args []string) { },
+type option struct {
+	aeCMD.Option
+	writer io.Writer
 }
 
-func Execute() {
-	err := rootCmd.Execute()
-	if err != nil {
-		os.Exit(1)
+func (o *option) Complete(args []string) error {
+	return nil
+}
+
+func (o *option) Validate() error {
+	return nil
+}
+
+func (o *option) Execute() error {
+	return nil
+}
+
+func (o *option) SetWriter(writer io.Writer) {
+	o.writer = writer
+}
+
+func NewCMD() *cobra.Command {
+	o := &option{}
+	cmd := &cobra.Command{
+		Use:   "pki",
+		Short: "Contains PKI related subcommands.",
+
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return aeCMD.Run(o, cmd, args)
+		},
 	}
-}
-
-func init() {
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-
-	// add subcommands
-	rootCmd.AddCommand(oci.NewCMD())
-	rootCmd.AddCommand(version.NewCMD())
-	rootCmd.AddCommand(pki.NewCMD())
+	cmd.AddCommand(pki_create.NewCMD())
+	return cmd
 }
