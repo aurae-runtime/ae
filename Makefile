@@ -45,7 +45,7 @@ COMMIT      := $(shell git rev-parse HEAD)
 DATE        := $(shell date +%Y-%m-%d)
 PKG_LDFLAGS := github.com/prometheus/common/version
 
-compile: mod ## Compile for the local architecture ⚙
+compile: mod proto ## Compile for the local architecture ⚙
 	@echo "Compiling..."
 	go build -ldflags "\
 	-X 'main.Version=$(version)' \
@@ -64,7 +64,7 @@ goreleaser: ## Run goreleaser directly at the pinned version 🛠
 	go run github.com/goreleaser/goreleaser@v1.14 $(GORELEASER_FLAGS)
 
 .PHONY: mod
-mod: ## Go mod things
+mod: proto ## Go mod things
 	go mod tidy
 	go mod vendor
 	go mod download
@@ -84,6 +84,7 @@ clean: ## Clean your artifacts 🧼
 	@echo "Cleaning..."
 	rm -rvf dist/*
 	rm -rvf release/*
+	rm -rvf pkg/api/
 
 .PHONY: help
 help:  ## Show help messages for make targets
@@ -105,3 +106,8 @@ lint: ## Runs the linter
 .PHONY: check-editorconfig
 check-editorconfig: ## Use to check if the codebase follows editorconfig rules
 	@docker run --rm --volume=$(shell PWD):/check mstruebing/editorconfig-checker
+
+.PHONY: proto
+proto:
+	@buf --version >/dev/null 2>&1 || (echo "Error: buf is not installed.  Please install from https://docs.buf.build/installation"; exit 1)
+	buf generate -v https://github.com/aurae-runtime/aurae.git#branch=main,subdir=api

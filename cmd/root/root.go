@@ -33,6 +33,7 @@ package root_cmd
 import (
 	"os"
 
+	"github.com/aurae-runtime/ae/cmd/health"
 	"github.com/aurae-runtime/ae/cmd/oci"
 	"github.com/aurae-runtime/ae/cmd/pki"
 	"github.com/aurae-runtime/ae/cmd/version"
@@ -61,4 +62,5 @@ func init() {
 	rootCmd.AddCommand(oci.NewCMD())
 	rootCmd.AddCommand(version.NewCMD())
 	rootCmd.AddCommand(pki.NewCMD())
+	rootCmd.AddCommand(health.NewCMD())
 }
