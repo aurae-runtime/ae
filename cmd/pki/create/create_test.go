@@ -32,6 +32,7 @@ package create
 
 import (
 	"bytes"
+	"context"
 	"crypto/x509"
 	"encoding/json"
 	"encoding/pem"
@@ -43,19 +44,19 @@ import (
 func TestPKICreateCMD(t *testing.T) {
 	t.Run("ae pki create my.domain.com", func(t *testing.T) {
 		buffer := &bytes.Buffer{}
-		cmd := NewCMD()
+		cmd := NewCMD(context.Background())
 		cmd.SetOut(buffer)
 		cmd.SetErr(buffer)
 		cmd.SetArgs([]string{"my.domain.com"})
 		err := cmd.Execute()
 		if err != nil {
-			t.Errorf("ae pki create my.domain.com -- failed")
+			t.Errorf("ae pki create my.domain.com")
 		}
 
 		var ca pki.AuraeCA
 		err = json.Unmarshal(buffer.Bytes(), &ca)
 		if err != nil {
-			t.Errorf("could not marshall certificate -- failed")
+			t.Errorf("could not marshall certificate")
 		}
 
 		// load ca.cert
@@ -63,7 +64,7 @@ func TestPKICreateCMD(t *testing.T) {
 
 		crt, err := x509.ParseCertificate(cert.Bytes)
 		if err != nil {
-			t.Errorf("could parse certificate")
+			t.Errorf("could not parse certificate")
 		}
 		if crt.Subject.CommonName != "my.domain.com" {
 			t.Errorf("certificate does not contain common name")
