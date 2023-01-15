@@ -55,12 +55,11 @@ commit: a7c46aa017bc447ece506629196bd0548cbbc469
 			Title: "print version in json",
 			Cmd:   NewCMD(),
 			Args:  []string{"--output", "json"},
-			ExpectedStdout: `{
-    "buildTime": "2023-01-07",
-    "version": "v0.1.0",
-    "commit": "a7c46aa017bc447ece506629196bd0548cbbc469"
-}
-`,
+			ExpectedStdout: "{\n" +
+				"    \"buildTime\": \"2023-01-07\",\n" +
+				"    \"version\": \"v0.1.0\",\n" +
+				"    \"commit\": \"a7c46aa017bc447ece506629196bd0548cbbc469\"\n" +
+				"}\n",
 		},
 		{
 			Title:          "print short version",
