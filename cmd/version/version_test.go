@@ -33,7 +33,7 @@ package version
 import (
 	"testing"
 
-	cmdTest "github.com/aurae-runtime/ae/cmd/test"
+	"github.com/aurae-runtime/ae/pkg/cli/testsuite"
 	"github.com/prometheus/common/version"
 )
 
@@ -41,25 +41,33 @@ func TestVersionCMD(t *testing.T) {
 	version.Version = "v0.1.0"
 	version.BuildDate = "2023-01-07"
 	version.Revision = "a7c46aa017bc447ece506629196bd0548cbbc469"
-	testSuite := []cmdTest.Suite{
+	tests := []testsuite.Test{
 		{
-			Title:           "empty args",
-			Args:            []string{},
-			IsErrorExpected: false,
-			ExpectedMessage: `{
-` + `    "buildTime": "2023-01-07",
-` + `    "version": "v0.1.0",
-` + `    "commit": "a7c46aa017bc447ece506629196bd0548cbbc469"
-}`,
+			Title: "empty args",
+			Cmd:   NewCMD(),
+			Args:  []string{},
+			ExpectedStdout: `buildTime: "2023-01-07"
+version: v0.1.0
+commit: a7c46aa017bc447ece506629196bd0548cbbc469
+`,
 		},
 		{
-			Title:           "print short version",
-			Args:            []string{"--short"},
-			IsErrorExpected: false,
-			ExpectedMessage: `{
-` + `    "version": "v0.1.0"` + `
-}`,
+			Title: "print version in json",
+			Cmd:   NewCMD(),
+			Args:  []string{"--output", "json"},
+			ExpectedStdout: `{
+    "buildTime": "2023-01-07",
+    "version": "v0.1.0",
+    "commit": "a7c46aa017bc447ece506629196bd0548cbbc469"
+}
+`,
+		},
+		{
+			Title:          "print short version",
+			Cmd:            NewCMD(),
+			Args:           []string{"--short"},
+			ExpectedStdout: "version: v0.1.0\n",
 		},
 	}
-	cmdTest.ExecuteSuiteTest(t, NewCMD, testSuite)
+	testsuite.ExecuteSuite(t, tests)
 }
