@@ -120,6 +120,7 @@ func (o *option) Execute(ctx context.Context) error {
 		if c.IsIPv6() {
 			o.protocol = "tcp6"
 		}
+		// TODO: use some concurrency magic to run these async
 		c.Each(o.checkHost)
 	} else if len(o.ip) != 0 {
 		if net.ParseIP(o.ip).To4() == nil {
