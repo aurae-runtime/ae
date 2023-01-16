@@ -46,10 +46,11 @@ func TestVersionCMD(t *testing.T) {
 			Title: "empty args",
 			Cmd:   NewCMD(),
 			Args:  []string{},
-			ExpectedStdout: `buildTime: "2023-01-07"
-version: v0.1.0
-commit: a7c46aa017bc447ece506629196bd0548cbbc469
-`,
+			ExpectedStdout: "{\n" +
+				"    \"buildTime\": \"2023-01-07\",\n" +
+				"    \"version\": \"v0.1.0\",\n" +
+				"    \"commit\": \"a7c46aa017bc447ece506629196bd0548cbbc469\"\n" +
+				"}\n",
 		},
 		{
 			Title: "print version in json",
@@ -62,10 +63,12 @@ commit: a7c46aa017bc447ece506629196bd0548cbbc469
 				"}\n",
 		},
 		{
-			Title:          "print short version",
-			Cmd:            NewCMD(),
-			Args:           []string{"--short"},
-			ExpectedStdout: "version: v0.1.0\n",
+			Title: "print short version",
+			Cmd:   NewCMD(),
+			Args:  []string{"--short"},
+			ExpectedStdout: "{\n" +
+				"    \"version\": \"v0.1.0\"\n" +
+				"}\n",
 		},
 	}
 	testsuite.ExecuteSuite(t, tests)

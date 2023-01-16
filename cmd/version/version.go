@@ -83,7 +83,7 @@ func (o *option) SetWriter(writer io.Writer) {
 func NewCMD() *cobra.Command {
 	o := &option{
 		outputFormat: cli.NewOutputFormat().
-			WithDefaultFormat(printer.NewYAML().Format()).
+			WithDefaultFormat(printer.NewJSON().Format()).
 			WithPrinter(printer.NewJSON()).
 			WithPrinter(printer.NewYAML()),
 	}
