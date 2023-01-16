@@ -32,12 +32,13 @@ package health
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"log"
 	"net"
-	"strings"
 
+	"github.com/3th1nk/cidr"
 	"github.com/aurae-runtime/ae/pkg/cli"
 	"github.com/aurae-runtime/ae/pkg/cli/printer"
 	"github.com/aurae-runtime/ae/pkg/client"
@@ -49,64 +50,36 @@ import (
 )
 
 type outputHealthNode struct {
-	Version string `json:"version"`
+	Available bool
+	Version   string `json:"version"`
 }
 
 type outputHealth struct {
 	Nodes map[string]outputHealthNode `json:"nodes"`
 }
 
-func inc(ip net.IP) {
-	for i := len(ip) - 1; i >= 0; i-- {
-		ip[i]++
-		if ip[i] > 0 {
-			break
-		}
-	}
-}
-
-func hosts(cidr string) ([]string, error) {
-	ip, ipnet, err := net.ParseCIDR(cidr)
-	if err != nil {
-		return nil, err
-	}
-
-	var ips []string
-	for ip := ip.Mask(ipnet.Mask); ipnet.Contains(ip); inc(ip) {
-		ips = append(ips, ip.String())
-	}
-	// remove network address and broadcast address
-	if strings.HasSuffix(ips[0], ".0") {
-		ips = ips[1:]
-	}
-	if strings.HasSuffix(ips[len(ips)-1], ".255") {
-		ips = ips[:len(ips)-1]
-	}
-	return ips, nil
-}
-
-func protocol(ip_str string) (string, error) {
-	ip := net.ParseIP(ip_str)
-	if ip == nil {
-		return "", fmt.Errorf("unable to parse IP %q", ip_str)
-	}
-	protocol := "tcp4"
-	if ip.To4() == nil {
-		protocol = "tcp6"
-	}
-	return protocol, nil
-}
-
 type option struct {
 	aeCMD.Option
+	ctx          context.Context
 	cidr         string
+	ip           string
 	port         uint16
+	protocol     string
 	verbose      bool
 	writer       io.Writer
+	output       *outputHealth
 	outputFormat *cli.OutputFormat
 }
 
-func (o *option) Complete(_ []string) error {
+func (o *option) Complete(args []string) error {
+	switch args[0] {
+	case "cidr":
+		o.cidr = args[1]
+	case "ip":
+		o.ip = args[1]
+	default:
+		return errors.New("either 'cidr' or 'ip' must be passed to this command")
+	}
 	return nil
 }
 
@@ -115,77 +88,101 @@ func (o *option) Validate() error {
 		return err
 	}
 
-	if _, _, err := net.ParseCIDR(o.cidr); err != nil {
-		return err
+	if len(o.cidr) != 0 {
+		if _, _, err := net.ParseCIDR(o.cidr); err != nil {
+			return err
+		}
+	} else if len(o.ip) != 0 {
+		if ip := net.ParseIP(o.ip); ip == nil {
+			return fmt.Errorf("failed to parse ip %q", o.ip)
+		}
+	} else {
+		return errors.New("either 'cidr' or 'ip' must be passed to this command")
 	}
+
 	return nil
 }
 
-func (o *option) Execute() error {
-	ctx := context.Background()
-	hosts, err := hosts(o.cidr)
-	if err != nil {
-		return err
-	}
+func (o *option) Execute(ctx context.Context) error {
+	o.ctx = ctx
 
-	output := &outputHealth{
+	o.output = &outputHealth{
 		Nodes: make(map[string]outputHealthNode),
 	}
 
-	// TODO: concurrency.
-	for _, ip_str := range hosts {
-		p, err := protocol(ip_str)
+	o.protocol = "tcp4"
+
+	if len(o.cidr) != 0 {
+		c, err := cidr.Parse(o.cidr)
 		if err != nil {
 			return err
 		}
-		if o.verbose {
-			log.Printf("connecting to %s:%d using protocol %s\n", ip_str, o.port, p)
+		if c.IsIPv6() {
+			o.protocol = "tcp6"
 		}
-		c, err := client.New(ctx, config.WithSystem(config.System{Protocol: p, Socket: fmt.Sprintf("%s:%d", ip_str, o.port)}))
-		if err != nil {
-			return err
+		c.Each(o.checkHost)
+	} else if len(o.ip) != 0 {
+		if net.ParseIP(o.ip).To4() == nil {
+			o.protocol = "tcp6"
 		}
-
-		d, err := c.Discovery()
-		if err != nil {
-			return err
-		}
-
-		rsp, err := d.Health(ctx, &discoveryv0.HealthRequest{})
-		if err != nil {
-			if o.verbose {
-				log.Printf("failed to call health: %s.  not an aurae node\n", err)
-			}
-			continue
-		}
-
-		if rsp.Healthy {
-			output.Nodes[ip_str] = outputHealthNode{rsp.Version}
-		}
+		o.checkHost(o.ip)
 	}
 
-	return o.outputFormat.ToPrinter().Print(o.writer, output)
+	return o.outputFormat.ToPrinter().Print(o.writer, o.output)
 }
 
 func (o *option) SetWriter(writer io.Writer) {
 	o.writer = writer
 }
 
-func NewCMD() *cobra.Command {
+func (o option) checkHost(ip_str string) bool {
+	if o.verbose {
+		log.Printf("connecting to %s:%d using protocol %s\n", ip_str, o.port, o.protocol)
+	}
+
+	c, err := client.New(o.ctx, config.WithSystem(config.System{Protocol: o.protocol, Socket: net.JoinHostPort(ip_str, fmt.Sprintf("%d", o.port))}))
+	if err != nil {
+		log.Fatalf("failed to create client: %s", err)
+		return false
+	}
+
+	d, err := c.Discovery()
+	if err != nil {
+		log.Fatalf("failed to dial Discovery service: %s", err)
+		return false
+	}
+
+	rsp, err := d.Health(o.ctx, &discoveryv0.HealthRequest{})
+	if err != nil {
+		if o.verbose {
+			log.Printf("failed to call health: %s.  not an aurae node\n", err)
+		}
+		return true
+	}
+
+	if rsp.Healthy {
+		o.output.Nodes[ip_str] = outputHealthNode{Available: true, Version: rsp.Version}
+	} else {
+		o.output.Nodes[ip_str] = outputHealthNode{Available: false}
+	}
+	return true
+}
+
+func NewCMD(ctx context.Context) *cobra.Command {
 	o := &option{
 		outputFormat: cli.NewOutputFormat().
 			WithDefaultFormat(printer.NewJSON().Format()).
 			WithPrinter(printer.NewJSON()),
 	}
 	cmd := &cobra.Command{
-		Use:   "health",
-		Short: "Scans a cluster of nodes for healthy Aurae nodes.",
+		Use:   "health [cidr <cidr>|ip <ip>]",
+		Short: "Scans a node or cluster of nodes for active Aurae Discovery services.",
+		Args:  cobra.MinimumNArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return aeCMD.Run(o, cmd, args)
+			return aeCMD.Run(ctx, o, cmd, args)
 		},
 	}
 	o.outputFormat.AddFlags(cmd)
-	cmd.Flags().StringVar(&o.cidr, "cidr", o.cidr, "The network to scan in CIDR notation")
 	cmd.Flags().Uint16Var(&o.port, "port", o.port, "The port to use when trying to connect")
 	cmd.Flags().BoolVar(&o.verbose, "verbose", o.verbose, "Lots of output")
 	return cmd

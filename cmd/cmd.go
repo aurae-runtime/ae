@@ -31,6 +31,7 @@
 package aeCMD
 
 import (
+	"context"
 	"io"
 
 	"github.com/spf13/cobra"
@@ -45,11 +46,11 @@ type Option interface {
 	Validate() error
 	// Execute is the method used by the command to actually run the business
 	// logic.
-	Execute() error
+	Execute(context.Context) error
 	SetWriter(writer io.Writer)
 }
 
-func Run(o Option, cmd *cobra.Command, args []string) error {
+func Run(ctx context.Context, o Option, cmd *cobra.Command, args []string) error {
 	o.SetWriter(cmd.OutOrStdout())
 	if err := o.Complete(args); err != nil {
 		return err
@@ -57,5 +58,5 @@ func Run(o Option, cmd *cobra.Command, args []string) error {
 	if err := o.Validate(); err != nil {
 		return err
 	}
-	return o.Execute()
+	return o.Execute(ctx)
 }

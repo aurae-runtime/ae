@@ -31,6 +31,7 @@
 package root_cmd
 
 import (
+	"context"
 	"os"
 
 	"github.com/aurae-runtime/ae/cmd/health"
@@ -59,8 +60,9 @@ func init() {
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
 	// add subcommands
-	rootCmd.AddCommand(oci.NewCMD())
-	rootCmd.AddCommand(version.NewCMD())
-	rootCmd.AddCommand(pki.NewCMD())
-	rootCmd.AddCommand(health.NewCMD())
+	ctx := context.Background()
+	rootCmd.AddCommand(oci.NewCMD(ctx))
+	rootCmd.AddCommand(version.NewCMD(ctx))
+	rootCmd.AddCommand(pki.NewCMD(ctx))
+	rootCmd.AddCommand(health.NewCMD(ctx))
 }

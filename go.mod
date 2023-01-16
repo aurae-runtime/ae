@@ -3,6 +3,7 @@ module github.com/aurae-runtime/ae
 go 1.19
 
 require (
+	github.com/3th1nk/cidr v0.2.0
 	github.com/prometheus/common v0.39.0
 	github.com/spf13/cobra v1.6.1
 	google.golang.org/grpc v1.52.0
