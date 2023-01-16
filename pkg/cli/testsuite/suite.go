@@ -28,7 +28,7 @@
  *                                                                            *
 \* -------------------------------------------------------------------------- */
 
-package test
+package testsuite
 
 import (
 	"bytes"
@@ -37,35 +37,27 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type Suite struct {
-	Title           string
-	Args            []string
-	ExpectedMessage string
-	IsErrorExpected bool
+type Test struct {
+	Title          string
+	Cmd            *cobra.Command
+	Args           []string
+	ExpectedStdout string
 }
 
-func ExecuteSuiteTest(t *testing.T, newCMD func() *cobra.Command, suites []Suite) {
-	for _, test := range suites {
+func ExecuteSuite(t *testing.T, tests []Test) {
+	for _, test := range tests {
 		t.Run(test.Title, func(t *testing.T) {
 			buffer := &bytes.Buffer{}
-			cmd := newCMD()
-			cmd.SetOut(buffer)
-			cmd.SetErr(buffer)
-			cmd.SetArgs(test.Args)
+			test.Cmd.SetOut(buffer)
+			test.Cmd.SetArgs(test.Args)
 
-			err := cmd.Execute()
-			if test.IsErrorExpected {
-				if !IsNil(err) {
-					if !IsEqualString(test.ExpectedMessage, err.Error()) {
-						t.Errorf("\nError message of command %q was incorrect, got: \n%s\nwant: \n%s", test.Title, err.Error(), test.ExpectedMessage)
-					}
-				} else {
-					t.Errorf("\nError in command %q expected.", test.Title)
-				}
-			} else if IsNil(err) {
-				if !IsEqualString(test.ExpectedMessage, buffer.String()) {
-					t.Errorf("\nTest of command %q was incorrect, got: \n%s\nwant: \n%s", test.Title, buffer.String(), test.ExpectedMessage)
-				}
+			err := test.Cmd.Execute()
+
+			if !IsNil(err) {
+				t.Errorf("Unexpected error while executing command: %v", err)
+			}
+			if !IsEqualString(test.ExpectedStdout, buffer.String()) {
+				t.Errorf("Unexpected Stdout\ngot:\n%s\nwant:\n%s\n", test.ExpectedStdout, buffer.String())
 			}
 		})
 	}
@@ -75,6 +67,6 @@ func IsEqualString(s1, s2 string) bool {
 	return s1 == s2
 }
 
-func IsNil(object interface{}) bool {
+func IsNil(object any) bool {
 	return object == nil
 }

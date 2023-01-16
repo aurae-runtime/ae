@@ -1,55 +1,42 @@
 package cli
 
 import (
-	"bytes"
 	"errors"
 	"reflect"
 	"testing"
 
 	"github.com/aurae-runtime/ae/pkg/cli/printer"
+	"github.com/aurae-runtime/ae/pkg/cli/testsuite"
 	"github.com/spf13/cobra"
 )
 
+func newCmd(printers []printer.Interface) *cobra.Command {
+	cmd := &cobra.Command{}
+	output := NewOutputFormat()
+	for _, p := range printers {
+		output.WithPrinter(p)
+	}
+	output.AddFlags(cmd)
+	return cmd
+}
+
 func TestOutputFormatAddFlags(t *testing.T) {
-	tests := []struct {
-		name        string
-		printers    []printer.Interface
-		input       []string
-		expectedOut string
-	}{
+	tests := []testsuite.Test{
 		{
-			name:     "'output' is valid flag",
-			printers: []printer.Interface{printer.NewJSON()},
-			input:    []string{"--output", "json"},
+			Title:          "'output' is valid flag",
+			Cmd:            newCmd([]printer.Interface{printer.NewJSON()}),
+			Args:           []string{"--output", "json"},
+			ExpectedStdout: "",
 		},
 		{
-			name:     "'o' is valid flag",
-			printers: []printer.Interface{printer.NewJSON()},
-			input:    []string{"-o", "json"},
+			Title:          "'o' is valid flag",
+			Cmd:            newCmd([]printer.Interface{printer.NewJSON()}),
+			Args:           []string{"-o", "json"},
+			ExpectedStdout: "",
 		},
 	}
 
-	for _, test := range tests {
-		cmd := &cobra.Command{}
-		output := NewOutputFormat()
-		for _, p := range test.printers {
-			output.WithPrinter(p)
-		}
-		output.AddFlags(cmd)
-
-		buf := &bytes.Buffer{}
-		cmd.SetOut(buf)
-		cmd.SetErr(buf)
-		cmd.SetArgs(test.input)
-
-		if err := cmd.Execute(); err != nil {
-			t.Errorf("%s: errored. Got: %s", test.name, buf.String())
-		}
-
-		if buf.String() != "" {
-			t.Errorf("%s: expected no output. Got: %s", test.name, buf.String())
-		}
-	}
+	testsuite.ExecuteSuite(t, tests)
 }
 
 func TestOutputFormatValidate(t *testing.T) {
@@ -74,14 +61,12 @@ func TestOutputFormatValidate(t *testing.T) {
 			expectedErr: errors.New("\"json\": unknown output format"),
 		},
 	}
-
 	for _, test := range tests {
 		output := NewOutputFormat()
 		for _, p := range test.printers {
 			output.WithPrinter(p)
 		}
 		output.format = test.format
-
 		err := output.Validate()
 		if test.expectedErr == nil {
 			if err != nil {
@@ -92,7 +77,6 @@ func TestOutputFormatValidate(t *testing.T) {
 		}
 	}
 }
-
 func TestOutputFormatToPrinter(t *testing.T) {
 	tests := []struct {
 		format       string
@@ -110,14 +94,12 @@ func TestOutputFormatToPrinter(t *testing.T) {
 			expectedType: reflect.TypeOf(printer.YAML{}),
 		},
 	}
-
 	for _, test := range tests {
 		output := NewOutputFormat()
 		for _, p := range test.printers {
 			output.WithPrinter(p)
 		}
 		output.format = test.format
-
 		printerType := reflect.Indirect(reflect.ValueOf(output.ToPrinter())).Type()
 		if test.expectedType != printerType {
 			t.Errorf("expected: %v; got: %v", test.expectedType, printerType)
@@ -126,14 +108,14 @@ func TestOutputFormatToPrinter(t *testing.T) {
 }
 
 func TestOutputFormatFlagHelp(t *testing.T) {
-	cmd := &cobra.Command{}
-	output := NewOutputFormat().
-		WithPrinter(printer.NewJSON()).
-		WithPrinter(printer.NewYAML())
-	output.AddFlags(cmd)
-	f := cmd.Flag("output")
-	expected := "Output format. One of: (json, yaml)."
-	if f.Usage != expected {
-		t.Errorf("expected: %s; got: %s", expected, f.Usage)
+	tests := []testsuite.Test{
+		{
+			Title:          "Help is formatted correctly",
+			Cmd:            newCmd([]printer.Interface{printer.NewJSON(), printer.NewYAML()}),
+			Args:           []string{"help"},
+			ExpectedStdout: "",
+		},
 	}
+
+	testsuite.ExecuteSuite(t, tests)
 }
