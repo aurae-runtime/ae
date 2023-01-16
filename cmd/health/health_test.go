@@ -9,7 +9,7 @@ import (
 
 func TestComplete(t *testing.T) {
 	ts := []struct {
-		args0 string
+		args0   string
 		wanterr bool
 	}{
 		{
@@ -27,7 +27,7 @@ func TestComplete(t *testing.T) {
 	}
 
 	for _, tt := range ts {
-		o := &option {}
+		o := &option{}
 		goterr := o.Complete([]string{tt.args0, "foo"})
 		if tt.wanterr && goterr == nil {
 			t.Fatal("want error, got no error")
@@ -40,50 +40,50 @@ func TestComplete(t *testing.T) {
 
 func TestValidate(t *testing.T) {
 	ts := []struct {
-		name string
+		name         string
 		outputFormat *cli.OutputFormat
-		cidr string
-		ip string
-		wanterr bool
+		cidr         string
+		ip           string
+		wanterr      bool
 	}{
 		{
-			name: "no output format",
+			name:         "no output format",
 			outputFormat: cli.NewOutputFormat(),
-			wanterr: true,
+			wanterr:      true,
 		},
 		{
-			name: "no cidr or ip",
+			name:         "no cidr or ip",
 			outputFormat: cli.NewOutputFormat().WithDefaultFormat("json").WithPrinter(printer.NewJSON()),
-			wanterr: true,
+			wanterr:      true,
 		},
 		{
-			name: "invalid cidr",
+			name:         "invalid cidr",
 			outputFormat: cli.NewOutputFormat().WithDefaultFormat("json").WithPrinter(printer.NewJSON()),
-			cidr: "invalid cidr",
-			wanterr: true,
+			cidr:         "invalid cidr",
+			wanterr:      true,
 		},
 		{
-			name: "valid cidr",
+			name:         "valid cidr",
 			outputFormat: cli.NewOutputFormat().WithDefaultFormat("json").WithPrinter(printer.NewJSON()),
-			cidr: "192.168.170.0/32",
-			wanterr: false,
+			cidr:         "192.168.170.0/32",
+			wanterr:      false,
 		},
 		{
-			name: "invalid ip",
+			name:         "invalid ip",
 			outputFormat: cli.NewOutputFormat().WithDefaultFormat("json").WithPrinter(printer.NewJSON()),
-			ip: "invalid ip",
-			wanterr: true,
+			ip:           "invalid ip",
+			wanterr:      true,
 		},
 		{
-			name: "valid ip",
+			name:         "valid ip",
 			outputFormat: cli.NewOutputFormat().WithDefaultFormat("json").WithPrinter(printer.NewJSON()),
-			ip: "10.0.0.0",
-			wanterr: false,
+			ip:           "10.0.0.0",
+			wanterr:      false,
 		},
 	}
 
 	for _, tt := range ts {
-		o := &option {cidr: tt.cidr, ip: tt.ip, outputFormat: tt.outputFormat}
+		o := &option{cidr: tt.cidr, ip: tt.ip, outputFormat: tt.outputFormat}
 		goterr := o.Validate()
 		if tt.wanterr && goterr == nil {
 			t.Fatalf("[%s] want error, got no error", tt.name)
