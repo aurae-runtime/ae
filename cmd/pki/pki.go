@@ -31,6 +31,7 @@
 package pki
 
 import (
+	"context"
 	"io"
 
 	aeCMD "github.com/aurae-runtime/ae/cmd"
@@ -51,7 +52,7 @@ func (o *option) Validate() error {
 	return nil
 }
 
-func (o *option) Execute() error {
+func (o *option) Execute(_ context.Context) error {
 	return nil
 }
 
@@ -59,16 +60,16 @@ func (o *option) SetWriter(writer io.Writer) {
 	o.writer = writer
 }
 
-func NewCMD() *cobra.Command {
+func NewCMD(ctx context.Context) *cobra.Command {
 	o := &option{}
 	cmd := &cobra.Command{
 		Use:   "pki",
 		Short: "Contains PKI related subcommands.",
 
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return aeCMD.Run(o, cmd, args)
+			return aeCMD.Run(ctx, o, cmd, args)
 		},
 	}
-	cmd.AddCommand(pki_create.NewCMD())
+	cmd.AddCommand(pki_create.NewCMD(ctx))
 	return cmd
 }

@@ -31,6 +31,7 @@
 package version
 
 import (
+	"context"
 	"testing"
 
 	"github.com/aurae-runtime/ae/pkg/cli/testsuite"
@@ -44,7 +45,7 @@ func TestVersionCMD(t *testing.T) {
 	tests := []testsuite.Test{
 		{
 			Title: "empty args",
-			Cmd:   NewCMD(),
+			Cmd:   NewCMD(context.Background()),
 			Args:  []string{},
 			ExpectedStdout: "{\n" +
 				"    \"buildTime\": \"2023-01-07\",\n" +
@@ -54,7 +55,7 @@ func TestVersionCMD(t *testing.T) {
 		},
 		{
 			Title: "print version in json",
-			Cmd:   NewCMD(),
+			Cmd:   NewCMD(context.Background()),
 			Args:  []string{"--output", "json"},
 			ExpectedStdout: "{\n" +
 				"    \"buildTime\": \"2023-01-07\",\n" +
@@ -64,7 +65,7 @@ func TestVersionCMD(t *testing.T) {
 		},
 		{
 			Title: "print short version",
-			Cmd:   NewCMD(),
+			Cmd:   NewCMD(context.Background()),
 			Args:  []string{"--short"},
 			ExpectedStdout: "{\n" +
 				"    \"version\": \"v0.1.0\"\n" +

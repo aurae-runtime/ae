@@ -31,6 +31,7 @@
 package version
 
 import (
+	"context"
 	"io"
 
 	aeCMD "github.com/aurae-runtime/ae/cmd"
@@ -64,7 +65,7 @@ func (o *option) Validate() error {
 	return nil
 }
 
-func (o *option) Execute() error {
+func (o *option) Execute(_ context.Context) error {
 	clientVersion := &outputVersion{
 		Version: version.Version,
 	}
@@ -80,7 +81,7 @@ func (o *option) SetWriter(writer io.Writer) {
 	o.writer = writer
 }
 
-func NewCMD() *cobra.Command {
+func NewCMD(ctx context.Context) *cobra.Command {
 	o := &option{
 		outputFormat: cli.NewOutputFormat().
 			WithDefaultFormat(printer.NewJSON().Format()).
@@ -91,7 +92,7 @@ func NewCMD() *cobra.Command {
 		Use:   "version",
 		Short: "Displays Aurae command line client version.",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return aeCMD.Run(o, cmd, args)
+			return aeCMD.Run(ctx, o, cmd, args)
 		},
 	}
 	o.outputFormat.AddFlags(cmd)

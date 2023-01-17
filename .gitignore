@@ -3,4 +3,5 @@ bin/*
 vendor/*
 dist/
 .vscode/
+pkg/api/
 ae

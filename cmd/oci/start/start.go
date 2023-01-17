@@ -31,6 +31,7 @@
 package start
 
 import (
+	"context"
 	"fmt"
 	"io"
 
@@ -57,7 +58,7 @@ func (o *option) Validate() error {
 	return nil
 }
 
-func (o *option) Execute() error {
+func (o *option) Execute(_ context.Context) error {
 	fmt.Fprintln(o.writer, "start called")
 	return nil
 }
@@ -66,7 +67,7 @@ func (o *option) SetWriter(writer io.Writer) {
 	o.writer = writer
 }
 
-func NewCMD() *cobra.Command {
+func NewCMD(ctx context.Context) *cobra.Command {
 	o := &option{
 		outputFormat: cli.NewOutputFormat().
 			WithPrinter(printer.NewJSON()).
@@ -77,7 +78,7 @@ func NewCMD() *cobra.Command {
 		Short: "Start the user-specified code from process.",
 		Long:  `Start the user-specified code from process.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return aeCMD.Run(o, cmd, args)
+			return aeCMD.Run(ctx, o, cmd, args)
 		},
 	}
 	o.outputFormat.AddFlags(cmd)

@@ -31,6 +31,7 @@
 package runtime
 
 import (
+	"context"
 	"io"
 
 	aeCMD "github.com/aurae-runtime/ae/cmd"
@@ -56,7 +57,7 @@ func (o *option) Validate() error {
 	return nil
 }
 
-func (o *option) Execute() error {
+func (o *option) Execute(_ context.Context) error {
 	return o.outputFormat.ToPrinter().Print(o.writer, "runtime called")
 }
 
@@ -64,14 +65,14 @@ func (o *option) SetWriter(writer io.Writer) {
 	o.writer = writer
 }
 
-func NewCMD() *cobra.Command {
+func NewCMD(ctx context.Context) *cobra.Command {
 	o := &option{}
 	cmd := &cobra.Command{
 		Use:   "runtime",
 		Short: "CLI for aurae runtime services.",
 		Long:  `CLI for aurae runtime services.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return aeCMD.Run(o, cmd, args)
+			return aeCMD.Run(ctx, o, cmd, args)
 		},
 	}
 	// Here you will define your flags and configuration settings.
@@ -83,10 +84,10 @@ func NewCMD() *cobra.Command {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// startCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	cmd.AddCommand(allocate.NewCMD())
-	cmd.AddCommand(free.NewCMD())
-	cmd.AddCommand(start.NewCMD())
-	cmd.AddCommand(stop.NewCMD())
+	cmd.AddCommand(allocate.NewCMD(ctx))
+	cmd.AddCommand(free.NewCMD(ctx))
+	cmd.AddCommand(start.NewCMD(ctx))
+	cmd.AddCommand(stop.NewCMD(ctx))
 
 	return cmd
 }
