@@ -9,7 +9,7 @@ import (
 )
 
 type Discovery interface {
-	Health(context.Context, *discoveryv0.HealthRequest) (*discoveryv0.HealthResponse, error)
+	Discover(context.Context, *discoveryv0.DiscoverRequest) (*discoveryv0.DiscoverResponse, error)
 }
 
 type discovery struct {
@@ -22,6 +22,6 @@ func New(ctx context.Context, conn grpc.ClientConnInterface) Discovery {
 	}
 }
 
-func (d *discovery) Health(ctx context.Context, req *discoveryv0.HealthRequest) (*discoveryv0.HealthResponse, error) {
-	return d.client.Health(ctx, req)
+func (d *discovery) Discover(ctx context.Context, req *discoveryv0.DiscoverRequest) (*discoveryv0.DiscoverResponse, error) {
+	return d.client.Discover(ctx, req)
 }

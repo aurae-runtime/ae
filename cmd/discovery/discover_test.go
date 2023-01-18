@@ -1,4 +1,4 @@
-package health
+package discovery
 
 import (
 	"testing"
