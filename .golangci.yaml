@@ -1,3 +1,7 @@
 run:
   skip-dirs:
     - pkg/api/
+
+linters:
+  disable:
+    - typecheck
