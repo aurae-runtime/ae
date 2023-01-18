@@ -34,7 +34,7 @@ import (
 	"context"
 	"os"
 
-	"github.com/aurae-runtime/ae/cmd/health"
+	"github.com/aurae-runtime/ae/cmd/discovery"
 	"github.com/aurae-runtime/ae/cmd/oci"
 	"github.com/aurae-runtime/ae/cmd/pki"
 	"github.com/aurae-runtime/ae/cmd/version"
@@ -64,5 +64,5 @@ func init() {
 	rootCmd.AddCommand(oci.NewCMD(ctx))
 	rootCmd.AddCommand(version.NewCMD(ctx))
 	rootCmd.AddCommand(pki.NewCMD(ctx))
-	rootCmd.AddCommand(health.NewCMD(ctx))
+	rootCmd.AddCommand(discovery.NewCMD(ctx))
 }
