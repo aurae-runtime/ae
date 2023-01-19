@@ -78,13 +78,29 @@ ae stop executable, exe
 ae stop container # Note this has an alias: 'ae oci kill'
 ```
 
-Logs
+Stop a resource immediately.
+
+#### Logs
 
 ```bash
 ae logs <options>
 ```
 
-Stop a resource immediately.
+#### Discovery
+
+```bash
+ae discover <cidr <cidr> | ip <ip>>
+```
+
+Scans a cluster of Aurae nodes and returns information about them, including the version running.
+
+#### Health
+
+```bash
+ae check <cidr <cidr> | ip <ip>> <service,...>
+```
+
+Scans a cluster of Aurae nodes and returns the serving status of the given list of services.
 
 
 ## Guiding Principles
