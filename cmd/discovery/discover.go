@@ -28,7 +28,7 @@
  *                                                                            *
 \* -------------------------------------------------------------------------- */
 
-package health
+package discovery
 
 import (
 	"context"
@@ -49,13 +49,13 @@ import (
 	discoveryv0 "github.com/aurae-runtime/ae/pkg/api/v0/discovery"
 )
 
-type outputHealthNode struct {
+type outputDiscoverNode struct {
 	Available bool
 	Version   string `json:"version"`
 }
 
-type outputHealth struct {
-	Nodes map[string]outputHealthNode `json:"nodes"`
+type outputDiscover struct {
+	Nodes map[string]outputDiscoverNode `json:"nodes"`
 }
 
 type option struct {
@@ -67,7 +67,7 @@ type option struct {
 	protocol     string
 	verbose      bool
 	writer       io.Writer
-	output       *outputHealth
+	output       *outputDiscover
 	outputFormat *cli.OutputFormat
 }
 
@@ -106,8 +106,8 @@ func (o *option) Validate() error {
 func (o *option) Execute(ctx context.Context) error {
 	o.ctx = ctx
 
-	o.output = &outputHealth{
-		Nodes: make(map[string]outputHealthNode),
+	o.output = &outputDiscover{
+		Nodes: make(map[string]outputDiscoverNode),
 	}
 
 	o.protocol = "tcp4"
@@ -153,18 +153,18 @@ func (o option) checkHost(ip_str string) bool {
 		return false
 	}
 
-	rsp, err := d.Health(o.ctx, &discoveryv0.HealthRequest{})
+	rsp, err := d.Discover(o.ctx, &discoveryv0.DiscoverRequest{})
 	if err != nil {
 		if o.verbose {
-			log.Printf("failed to call health: %s.  not an aurae node\n", err)
+			log.Printf("failed to call discover: %s.  not an aurae node\n", err)
 		}
 		return true
 	}
 
 	if rsp.Healthy {
-		o.output.Nodes[ip_str] = outputHealthNode{Available: true, Version: rsp.Version}
+		o.output.Nodes[ip_str] = outputDiscoverNode{Available: true, Version: rsp.Version}
 	} else {
-		o.output.Nodes[ip_str] = outputHealthNode{Available: false}
+		o.output.Nodes[ip_str] = outputDiscoverNode{Available: false}
 	}
 	return true
 }
@@ -176,7 +176,7 @@ func NewCMD(ctx context.Context) *cobra.Command {
 			WithPrinter(printer.NewJSON()),
 	}
 	cmd := &cobra.Command{
-		Use:   "health [cidr <cidr>|ip <ip>]",
+		Use:   "discover [cidr <cidr>|ip <ip>]",
 		Short: "Scans a node or cluster of nodes for active Aurae Discovery services.",
 		Args:  cobra.MinimumNArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
