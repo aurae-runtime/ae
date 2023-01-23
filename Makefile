@@ -29,7 +29,7 @@
 # ---------------------------------------------------------------------------- #
 
 GORELEASER_FLAGS ?= --snapshot --rm-dist
-all: compile
+all: compile check-format lint test
 
 # Variables and Settings
 version     ?=  0.0.1
@@ -70,7 +70,7 @@ mod: proto ## Go mod things
 	go mod download
 
 .PHONY: install
-install: compile ## Install the program to /usr/bin 🎉
+install: compile test ## Install the program to /usr/bin 🎉
 	@echo "Installing..."
 	sudo cp bin/$(target) /usr/local/bin/$(target)
 
