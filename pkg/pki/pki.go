@@ -187,6 +187,94 @@ func CreateClientCSR(path, domain, user string) (*CertificateRequest, error) {
 	return csr, nil
 }
 
+func CreateClientCertificate(path, csrStr string, ca *Certificate, user string) (*Certificate, error) {
+	csrPem, _ := pem.Decode([]byte(csrStr))
+	if csrPem == nil || csrPem.Type != "CERTIFICATE REQUEST" {
+		return &Certificate{}, fmt.Errorf("failed to decode certificate request")
+	}
+
+	csr, err := x509.ParseCertificateRequest(csrPem.Bytes)
+	if err != nil {
+		return &Certificate{}, fmt.Errorf("failed to parse certificate request: %w", err)
+	}
+
+	caCrtPem, _ := pem.Decode([]byte(ca.Certificate))
+	if caCrtPem == nil || caCrtPem.Type != "CERTIFICATE" {
+		return &Certificate{}, fmt.Errorf("failed to decode certificate")
+	}
+
+	caCrt, err := x509.ParseCertificate(caCrtPem.Bytes)
+	if err != nil {
+		return &Certificate{}, fmt.Errorf("failed to parse certificate: %w", err)
+	}
+
+	caPrivPem, _ := pem.Decode([]byte(ca.PrivateKey))
+	if caPrivPem == nil || caPrivPem.Type != "RSA PRIVATE KEY" {
+		return &Certificate{}, fmt.Errorf("failed to decode private key")
+	}
+
+	caPriv, err := x509.ParsePKCS1PrivateKey(caPrivPem.Bytes)
+	if err != nil {
+		return &Certificate{}, fmt.Errorf("failed to parse private key: %w", err)
+	}
+
+	now := time.Now()
+
+	serialNumberLimit := new(big.Int).Lsh(big.NewInt(1), 128)
+	serialNumber, err := rand.Int(rand.Reader, serialNumberLimit)
+	if err != nil {
+		return &Certificate{}, fmt.Errorf("failed to generate serial number: %w", err)
+	}
+
+	template := x509.Certificate{
+		Subject:               csr.Subject,
+		NotBefore:             now,
+		NotAfter:              now.Add(24 * time.Hour * 9999),
+		SerialNumber:          serialNumber,
+		IsCA:                  false,
+		BasicConstraintsValid: true,
+		KeyUsage:              x509.KeyUsageDigitalSignature | x509.KeyUsageContentCommitment | x509.KeyUsageKeyEncipherment | x509.KeyUsageDataEncipherment,
+	}
+
+	crtPrivKey, err := rsa.GenerateKey(rand.Reader, 4096)
+	if err != nil {
+		return &Certificate{}, fmt.Errorf("failed to generate private key: %w", err)
+	}
+
+	// TODO: is this the correct Subject Key Identifier?
+	pubHash := sha1.Sum(crtPrivKey.PublicKey.N.Bytes())
+	template.SubjectKeyId = pubHash[:]
+
+	crtPrivPem := pem.EncodeToMemory(&pem.Block{
+		Type:  "RSA PRIVATE KEY",
+		Bytes: x509.MarshalPKCS1PrivateKey(crtPrivKey),
+	})
+
+	clientCrtBytes, err := x509.CreateCertificate(rand.Reader, &template, caCrt, &crtPrivKey.PublicKey, caPriv)
+	if err != nil {
+		return &Certificate{}, fmt.Errorf("failed to create certificate: %w", err)
+	}
+
+	clientCrtPem := pem.EncodeToMemory(&pem.Block{
+		Type:  "CERTIFICATE",
+		Bytes: clientCrtBytes,
+	})
+
+	clientCert := &Certificate{
+		Certificate: string(clientCrtPem),
+		PrivateKey:  string(crtPrivPem),
+	}
+
+	// if path != "" {
+	// 	err = createCsrFiles(path, csr)
+	// 	if err != nil {
+	// 		return csr, err
+	// 	}
+	// }
+
+	return clientCert, nil
+}
+
 func createCAFiles(path string, ca *Certificate) error {
 	path = filepath.Clean(path)
 	err := os.MkdirAll(path, os.ModePerm)
