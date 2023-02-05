@@ -68,10 +68,6 @@ func (o *option) Complete(args []string) error {
 		return fmt.Errorf("too many arguments for command 'create', expect %d, got %d", 1, len(args))
 	}
 
-	if o.caPath != "" && (o.caKeyPath == "" || o.csrPath == "") {
-		return fmt.Errorf("must provide --caKey and --csr when using --ca")
-	}
-
 	if o.caPath != "" {
 		b, err := os.ReadFile(o.caPath)
 		if err != nil {
@@ -80,15 +76,29 @@ func (o *option) Complete(args []string) error {
 
 		o.ca = &pki.Certificate{}
 		o.ca.Certificate = string(b)
-	}
 
-	if o.caKeyPath != "" {
-		b, err := os.ReadFile(o.caKeyPath)
-		if err != nil {
-			return fmt.Errorf("failed to read ca private key: %w", err)
+		if o.caKeyPath != "" {
+			b, err := os.ReadFile(o.caKeyPath)
+			if err != nil {
+				return fmt.Errorf("failed to read ca private key: %w", err)
+			}
+
+			o.ca.PrivateKey = string(b)
+		} else {
+			return fmt.Errorf("must provide --caKey and --csr when using --ca")
 		}
 
-		o.ca.PrivateKey = string(b)
+		if o.csrPath != "" {
+			b, err := os.ReadFile(o.csrPath)
+			if err != nil {
+				return fmt.Errorf("failed to read csr: %w", err)
+			}
+
+			o.csr = &pki.CertificateRequest{}
+			o.csr.CSR = string(b)
+		} else {
+			return fmt.Errorf("must provide --caKey and --csr when using --ca")
+		}
 	}
 
 	if o.csrPath != "" {
