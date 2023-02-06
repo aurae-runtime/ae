@@ -65,8 +65,8 @@ func NewCMD(ctx context.Context) *cobra.Command {
 	o := &option{}
 	cmd := &cobra.Command{
 		Use:   "stop",
-		Short: "Stop a runtime resource.",
-		Long:  `Stop a runtime resource.`,
+		Short: "Stop a cell resource.",
+		Long:  `Stop a cell resource.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return aeCMD.Run(ctx, o, cmd, args)
 		},

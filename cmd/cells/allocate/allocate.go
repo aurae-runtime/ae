@@ -28,17 +28,13 @@
  *                                                                            *
 \* -------------------------------------------------------------------------- */
 
-package runtime
+package allocate
 
 import (
 	"context"
 	"io"
 
 	aeCMD "github.com/aurae-runtime/ae/cmd"
-	allocate "github.com/aurae-runtime/ae/cmd/runtime/allocate"
-	free "github.com/aurae-runtime/ae/cmd/runtime/free"
-	start "github.com/aurae-runtime/ae/cmd/runtime/start"
-	stop "github.com/aurae-runtime/ae/cmd/runtime/stop"
 	"github.com/aurae-runtime/ae/pkg/cli"
 	"github.com/spf13/cobra"
 )
@@ -58,7 +54,7 @@ func (o *option) Validate() error {
 }
 
 func (o *option) Execute(_ context.Context) error {
-	return o.outputFormat.ToPrinter().Print(o.writer, "runtime called")
+	return o.outputFormat.ToPrinter().Print(o.writer, "allocate called")
 }
 
 func (o *option) SetWriter(writer io.Writer) {
@@ -68,26 +64,14 @@ func (o *option) SetWriter(writer io.Writer) {
 func NewCMD(ctx context.Context) *cobra.Command {
 	o := &option{}
 	cmd := &cobra.Command{
-		Use:   "runtime",
-		Short: "CLI for aurae runtime services.",
-		Long:  `CLI for aurae runtime services.`,
+		Use:   "allocate",
+		Short: "Allocate a cell resource.",
+		Long:  `Allocate a cell resource.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return aeCMD.Run(ctx, o, cmd, args)
 		},
 	}
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// startCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// startCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	cmd.AddCommand(allocate.NewCMD(ctx))
-	cmd.AddCommand(free.NewCMD(ctx))
-	cmd.AddCommand(start.NewCMD(ctx))
-	cmd.AddCommand(stop.NewCMD(ctx))
+	// add flags here
 
 	return cmd
 }

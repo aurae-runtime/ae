@@ -28,7 +28,7 @@
  *                                                                            *
 \* -------------------------------------------------------------------------- */
 
-package allocate
+package free
 
 import (
 	"context"
@@ -54,7 +54,7 @@ func (o *option) Validate() error {
 }
 
 func (o *option) Execute(_ context.Context) error {
-	return o.outputFormat.ToPrinter().Print(o.writer, "allocate called")
+	return o.outputFormat.ToPrinter().Print(o.writer, "free called")
 }
 
 func (o *option) SetWriter(writer io.Writer) {
@@ -64,9 +64,9 @@ func (o *option) SetWriter(writer io.Writer) {
 func NewCMD(ctx context.Context) *cobra.Command {
 	o := &option{}
 	cmd := &cobra.Command{
-		Use:   "allocate",
-		Short: "Allocate a runtime resource.",
-		Long:  `Allocate a runtime resource.`,
+		Use:   "free",
+		Short: "Free a cell resource.",
+		Long:  `Free a cell resource.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return aeCMD.Run(ctx, o, cmd, args)
 		},
