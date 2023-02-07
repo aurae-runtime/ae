@@ -45,6 +45,12 @@ jobs:
         with:
           go-version: '>=1.19.4'
 
+      - name: Make proto
+        uses: bufbuild/buf-setup-action@v1
+        with:
+          github_token: ${{ github.token }}
+        run: make proto
+
       - name: Lint
         uses: golangci/golangci-lint-action@v3
 
