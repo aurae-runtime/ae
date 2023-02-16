@@ -3,4 +3,4 @@
   <h3 align="center">UNIX inspired CLI Client for Aurae</h3>
 </h1>
 
-<p align="center"><a href="https://github.com/aurae-runtime/ae/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-apache_2.0-grey?style=for-the-badge&logo=apache" alt="license" /></p>
+<p align="center"><a href="https://github.com/aurae-runtime/ae/blob/main/LICENSE"><img src="https://img.shields.io/github/license/aurae-runtime/ae?color=grey&logo=apache&style=for-the-badge" alt="license"/></p>
