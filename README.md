@@ -17,11 +17,22 @@
 
 </div>
 
+---
+
+> The project welcomes new contributors and developers. Check out the **[Getting Involved](https://github.com/aurae-runtime/community#getting-involved)** section and join the Discord. It is mandatory to sign the **[CLA](https://cla.aurae.io/)** to contribute.
+
+
 <!-- TABLE OF CONTENTS -->
-<h2 id="table-of-contents"> Table of Contents</h2>
+<h2 id="table-of-contents"> 📑 Table of Contents</h2>
 
 <details open="open">
   <summary>Table of Contents</summary>
   <ol>
+    <li><a href="#about-the-project"> ► About The Project</a></li>
+    <li><a href="#quickstart"> ► Quickstart</a></li>
+    <li><a href="#usage"> ► Usage</a></li>
+    <li><a href="#philosophy"> ► Philosophy</a></li>
+    <li><a href="#contribute"> ► Contribute</a></li>
   </ol>
 </details>
+
