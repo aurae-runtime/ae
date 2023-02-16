@@ -39,7 +39,7 @@
 &nbsp;
 
 <!-- ABOUT THE PROJECT -->
-<h2 id="about-the-project"> About The Project</h2>
+<h2 id="about-the-project">About The Project</h2>
 
 `ae` is a UNIX inspired CLI client for **[Aurae](https://github.com/aurae-runtime/aurae)**, written in Go. However, in order to understand what `ae` should and can do, we must first understand `aer`.
 
@@ -72,3 +72,17 @@ _Typical tasks_ such as:
 should be possible with `ae`.
 
 There are more "practical" and "impact-oriented" tasks, and these probably need extra functionality, which they add to the lightweight `aer` tool.
+
+<!-- QUICKSTART -->
+<h2 id="about-the-project">Quickstart</h2>
+
+> This section is resaved for future installation as well as an example of integration.
+
+<!-- USAGE -->
+<h2 id="about-the-project">Usage</h2>
+
+<!-- PHILOSOPHY -->
+<h2 id="about-the-project">Philosophy</h2>
+
+<!-- CONTRIBUTE -->
+<h2 id="about-the-project">Contribute</h2>
