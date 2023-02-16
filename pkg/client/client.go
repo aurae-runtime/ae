@@ -14,11 +14,13 @@ import (
 	"github.com/aurae-runtime/ae/pkg/config"
 	"github.com/aurae-runtime/ae/pkg/discovery"
 	"github.com/aurae-runtime/ae/pkg/health"
+	"github.com/aurae-runtime/ae/pkg/observe"
 )
 
 type Client interface {
 	Discovery() (discovery.Discovery, error)
 	Health() (health.Health, error)
+	Observe() (observe.Observe, error)
 }
 
 type client struct {
@@ -26,6 +28,7 @@ type client struct {
 	conn      grpc.ClientConnInterface
 	discovery discovery.Discovery
 	health    health.Health
+	observe   observe.Observe
 }
 
 func New(ctx context.Context, cfg ...config.Config) (Client, error) {
@@ -54,6 +57,7 @@ func New(ctx context.Context, cfg ...config.Config) (Client, error) {
 		conn:      conn,
 		discovery: discovery.New(ctx, conn),
 		health:    health.New(ctx, conn),
+		observe:   observe.New(ctx, conn),
 	}, nil
 }
 
@@ -94,4 +98,11 @@ func (c *client) Health() (health.Health, error) {
 		return nil, fmt.Errorf("Health service is not available")
 	}
 	return c.health, nil
+}
+
+func (c *client) Observe() (observe.Observe, error) {
+	if c.observe == nil {
+		return nil, fmt.Errorf("Observe service is not available")
+	}
+	return c.observe, nil
 }
