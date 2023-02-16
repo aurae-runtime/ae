@@ -108,7 +108,7 @@ These are shown here in _alphabetical_ order.
   Checks the nodes of the cluster and returns the current serving status with the given list of services.
     
   ```
-  ae check <cidr <cidr> | ip <ip>> <service,...>
+  ae check <cidr <cidr> | ip <ip>> <service, ...>
   ```
   
 </details>
@@ -207,3 +207,16 @@ These are shown here in _alphabetical_ order.
 
 <!-- CONTRIBUTE -->
 <h2 id="about-the-project">Contribute</h2>
+    
+The **[Aurae](https://github.com/aurae-runtime/aurae)** project is always looking for new members and developers. Here in this repository you can improve `ae`, but be sure to check out the [organisation](https://github.com/aurae-runtime) and the other internal projects. [This](https://github.com/aurae-runtime/community) is always a good starting point.
+    
+**Code Quality**
+    
+**_Linting_**
+
+We are using the [golangci-lint](https://golangci-lint.run/) tool to lint the code. You will need to install it for your system, and can find instructions at [this link](https://golangci-lint.run/usage/install/). This tool runs on every pull request, and it must pass before merging is allowed. You can run it locally with `make lint`
+    
+**_Formatting_**
+    
+We are using the [gofmt](https://pkg.go.dev/cmd/gofmt) tool to lint the code. This tool runs on every pull request, and it must pass before merging is allowed. You can run it locally with `make format`
+
