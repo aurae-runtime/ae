@@ -76,7 +76,7 @@ There are more "practical" and "impact-oriented" tasks, and these probably need 
 <!-- QUICKSTART -->
 <h2 id="about-the-project">Quickstart</h2>
 
-> This section is reserved for future installation as well as an example of integration.
+> This section is reserved for future installation instructions as well as an example of integration.
 
 <!-- USAGE -->
 <h2 id="about-the-project">Usage</h2>
