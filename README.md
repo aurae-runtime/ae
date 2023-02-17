@@ -159,7 +159,7 @@ These are shown here in _alphabetical_ order.
   
   &nbsp;
   
-  Here the OCI CLI interface is implemented with the respective subcommands.
+  Here the [OCI CLI interface](https://github.com/opencontainers/runtime-tools/blob/master/docs/command-line-interface.md) is implemented with the respective subcommands.
     
   ```
   ae oci
