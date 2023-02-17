@@ -6,14 +6,21 @@
 <div align='center'>
 
 <a href='https://github.com/aurae-runtime/ae/blob/main/go.mod'>
-<img alt="go version" src="https://img.shields.io/github/go-mod/go-version/aurae-runtime/ae?color=grey&logo=go&style=for-the-badge">
+<img alt="go version" src="https://img.shields.io/github/go-mod/go-version/aurae-runtime/ae?color=grey&logo=go&logoColor=white&style=for-the-badge">
   
 </a>
   
 <a href="https://github.com/aurae-runtime/ae/blob/main/LICENSE">
-<img alt="license" src="https://img.shields.io/github/license/aurae-runtime/ae?color=grey&logo=apache&style=for-the-badge"/>
+<img alt="license" src="https://img.shields.io/github/license/aurae-runtime/ae?color=grey&logo=apache&logoColor=white&style=for-the-badge"/>
   
 </a>
+
+</div>
+
+<div align='center'>
+
+<a href="https://github.com/aurae-runtime/ae/actions/workflows/001-go-ubuntu-latest-make-test-format-lint.yaml">
+<img alt="workflow status" src="https://img.shields.io/github/actions/workflow/status/aurae-runtime/ae/001-go-ubuntu-latest-make-test-format-lint.yaml?label=test%20and%20format&logo=github-actions&logoColor=white&style=for-the-badge">
 
 </div>
 
@@ -45,14 +52,14 @@
 
 ### **What is `aer`?**
 
-The intention is to build an automatically generated CLI tool called [`aer`](https://github.com/aurae-runtime/aurae/tree/main/aer), which is based on the Rust client that has the identical scope of a single _[auraed](https://github.com/aurae-runtime/aurae/tree/main/auraed)_ node.
+[`aer`](https://github.com/aurae-runtime/aurae/tree/main/aer) is a CLI tool based on the Rust client which has the identical scope as a single _[auraed](https://github.com/aurae-runtime/aurae/tree/main/auraed)_ node.
 
-The tool will be aimed at "POWER-USERS" and exists as a rapid way to develop and debug against APIs that change frequently. For example, an [auraed](https://github.com/aurae-runtime/aurae/tree/main/auraed) developer can make a change to an existing API and test it locally against a single daemon.
+The tool is aimed at "POWER-USERS" and exists as a rapid way to develop and debug against APIs that change frequently. For example, an [auraed](https://github.com/aurae-runtime/aurae/) developer can make a change to an existing API and test it locally against a single daemon.
 
 
 ### **What is `ae`?**
 
-We want to create and maintain a CLI tool, `ae` that is based on the Go client and has a broader view than `aer`.
+We have created and maintain a CLI tool, `ae` that is based on the Go client and has a broader view than `aer`.
 
 The purpose will be to use `ae` for clusters of [Aurae](https://github.com/aurae-runtime/aurae) nodes and will probably work similar to `aer`, but not completely!
 
@@ -204,10 +211,8 @@ These are shown here in _alphabetical_ order.
 
 <!-- PHILOSOPHY -->
 <h2 id="philosophy">Philosophy</h2>
-
-**This project has a few philosophical principles.**
     
-### **Less is more**
+### Less is more
     
 We do not want `ae` to become a junk drawer. In situations where we are considering bringing in new functionality to the project, we prefer to keep it out.
 
@@ -215,7 +220,7 @@ For example imagine we were considering bringing in a `--filter` flag or a `--qu
 
 However the feature comes at a maintenance cost, and frankly already exists in other tools. Instead of adopting a filter syntax and the associated burden that comes along with it we instead focus on outputting to formats (such as JSON) which can easily be queried by existing tools (such as [jq](https://stedolan.github.io/jq/)).
     
-### **Just because you can, doesn't mean you should.**
+### Just because you can, doesn't mean you should.
     
 Also known as **"The Jurassic Park"** rule.
 
@@ -225,7 +230,7 @@ For example imagine discovering a well written, and well regarded library that t
 
 The project currently has established a need for JSON only, and plans to use jq for filtering and querying the data. In this case bringing the additional output types to the project "just because we can" would be a violation of this rule.
     
-### **No assumptions…**
+### No assumptions…
 
 Also known as "no conveniences" or "no magic" policies.
 
@@ -239,7 +244,7 @@ For example the ae project will need to read from a configuration file in order 
 
 We hold the opinion that the the file should be in a few well documented locations, and create logic to try the locations if no flag is passed. If a user passes a flag we should remove all assumptions from the program and only consider the input. We prefer clarity over magic.
     
-### **Remote Servers instead of Local Systems!**
+### Remote Servers instead of Local Systems!
     
 This is an interesting principle to consider. As the functionality of the ae tool grows we will inevitably need to execute logic somewhere.
 
@@ -254,13 +259,12 @@ In the event these types of situations arise, it is a sign that we likely need t
     
 The **[Aurae](https://github.com/aurae-runtime/aurae)** project is always looking for new members and developers. Here in this repository you can improve `ae`, but be sure to check out the [organisation](https://github.com/aurae-runtime) and the other internal projects. [This](https://github.com/aurae-runtime/community) is always a good starting point.
     
-**Code Quality**
+## Code Quality
     
-**_Linting_**
+### _Linting_
 
 We are using the [golangci-lint](https://golangci-lint.run/) tool to lint the code. You will need to install it for your system, and can find instructions at [this link](https://golangci-lint.run/usage/install/). This tool runs on every pull request, and it must pass before merging is allowed. You can run it locally with `make lint`.
     
-**_Formatting_**
+### _Formatting_
     
 We are using the [gofmt](https://pkg.go.dev/cmd/gofmt) tool to lint the code. This tool runs on every pull request, and it must pass before merging is allowed. You can run it locally with `make format`.
-
