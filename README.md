@@ -230,7 +230,7 @@ For example imagine discovering a well written, and well regarded library that t
 
 The project currently has established a need for JSON only, and plans to use jq for filtering and querying the data. In this case bringing the additional output types to the project "just because we can" would be a violation of this rule.
     
-### No assumptions…
+### No assumptions
 
 Also known as "no conveniences" or "no magic" policies.
 
