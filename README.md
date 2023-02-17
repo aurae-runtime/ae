@@ -50,14 +50,14 @@
 
 `ae` is a UNIX inspired CLI client for **[Aurae](https://github.com/aurae-runtime/aurae)**, written in Go. However, in order to understand what `ae` should and can do, we must first understand `aer`.
 
-### **What is `aer`?**
+### What is `aer`?
 
 [`aer`](https://github.com/aurae-runtime/aurae/tree/main/aer) is a CLI tool based on the Rust client which has the identical scope as a single _[auraed](https://github.com/aurae-runtime/aurae/tree/main/auraed)_ node.
 
 The tool is aimed at "POWER-USERS" and exists as a rapid way to develop and debug against APIs that change frequently. For example, an [auraed](https://github.com/aurae-runtime/aurae/) developer can make a change to an existing API and test it locally against a single daemon.
 
 
-### **What is `ae`?**
+### What is `ae`?
 
 We have created and maintain a CLI tool, `ae` that is based on the Go client and has a broader view than `aer`.
 
@@ -65,7 +65,7 @@ The purpose will be to use `ae` for clusters of [Aurae](https://github.com/aurae
 
 The `ae` CLI tool will work for a group of nodes and will probably contain more pragmatic functions that are more important for enterprise operators.
 
-### **Who is `ae` for?**
+### Who is `ae` for?
 
 The `ae` utility should be familiar to every cloud operator.
 
