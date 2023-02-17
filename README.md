@@ -45,7 +45,7 @@
 
 ### **What is `aer`?**
 
-The intention is to build an automatically generated CLI tool called `aer`, which is based on the Rust client that has the identical scope of a single _[auraed](https://github.com/aurae-runtime/aurae/tree/main/auraed)_ node.
+The intention is to build an automatically generated CLI tool called [`aer`](https://github.com/aurae-runtime/aurae/tree/main/aer), which is based on the Rust client that has the identical scope of a single _[auraed](https://github.com/aurae-runtime/aurae/tree/main/auraed)_ node.
 
 The tool will be aimed at "POWER-USERS" and exists as a rapid way to develop and debug against APIs that change frequently. For example, an [auraed](https://github.com/aurae-runtime/aurae/tree/main/auraed) developer can make a change to an existing API and test it locally against a single daemon.
 
