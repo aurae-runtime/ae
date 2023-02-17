@@ -16,29 +16,19 @@ func TestComplete(t *testing.T) {
 	}{
 		{
 			[]string{""},
-			"", "",
-			true,
+			"", "", true,
 		},
 		{
 			[]string{"foo"},
-			"", "",
-			true,
+			"", "", true,
 		},
 		{
 			[]string{"foo", "bar"},
-			"", "",
-			true,
+			"foo", "bar", false,
 		},
 		{
 			[]string{"foo", "bar", "baz"},
-			"bar",
-			"baz",
-			false,
-		},
-		{
-			[]string{"foo", "bar", "baz", "quux"},
-			"", "",
-			true,
+			"", "", true,
 		},
 	}
 
