@@ -19,7 +19,7 @@
 
 ---
 
-> The project welcomes new contributors and developers. Check out the **[Getting Involved](https://github.com/aurae-runtime/community#getting-involved)** section and join the Discord. It is mandatory to sign the **[CLA](https://cla.aurae.io/)** to contribute.
+> The project welcomes new contributors and developers. Check out the **[Getting Involved](https://github.com/aurae-runtime/community#getting-involved)** section and join the Discord. It is mandatory to sign the **[CLA](https://cla.nivenly.org/)** to contribute.
 
 
 <!-- TABLE OF CONTENTS -->
