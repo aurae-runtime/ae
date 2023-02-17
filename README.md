@@ -74,12 +74,12 @@ should be possible with `ae`.
 There are more "practical" and "impact-oriented" tasks, and these probably need extra functionality, which they add to the lightweight `aer` tool.
 
 <!-- QUICKSTART -->
-<h2 id="about-the-project">Quickstart</h2>
+<h2 id="quickstart">Quickstart</h2>
 
 > This section is reserved for future installation instructions as well as an example of integration.
 
 <!-- USAGE -->
-<h2 id="about-the-project">Usage</h2>
+<h2 id="usage">Usage</h2>
 
 There are a number of commands for `ae`.
 
@@ -203,7 +203,7 @@ These are shown here in _alphabetical_ order.
 </details>
 
 <!-- PHILOSOPHY -->
-<h2 id="about-the-project">Philosophy</h2>
+<h2 id="philosophy">Philosophy</h2>
 
 **This project has a few philosophical principles.**
     
@@ -250,7 +250,7 @@ We do not want to get into a situation where we have multiple clients attempting
 In the event these types of situations arise, it is a sign that we likely need to deploy a scheduler or server mechanisms somewhere to manage the work on our behalf.    
     
 <!-- CONTRIBUTE -->
-<h2 id="about-the-project">Contribute</h2>
+<h2 id="contribute">Contribute</h2>
     
 The **[Aurae](https://github.com/aurae-runtime/aurae)** project is always looking for new members and developers. Here in this repository you can improve `ae`, but be sure to check out the [organisation](https://github.com/aurae-runtime) and the other internal projects. [This](https://github.com/aurae-runtime/community) is always a good starting point.
     
