@@ -67,7 +67,7 @@ _Typical tasks_ such as:
 * "Rolling out NGINX to production"
 * "Counting the numbers of threads of a process"
 * "Changing the current databse connection count for a service"
-* Swinging traffic from one to another"
+* "Swinging traffic from one to another"
 
 should be possible with `ae`.
 
