@@ -35,11 +35,11 @@
 <details open="open">
   <summary>Table of Contents</summary>
   <ol>
-    <li><a href="#about-the-project"> ► About The Project</a></li>
-    <li><a href="#quickstart"> ► Quickstart</a></li>
-    <li><a href="#usage"> ► Usage</a></li>
-    <li><a href="#philosophy"> ► Philosophy</a></li>
-    <li><a href="#contribute"> ► Contribute</a></li>
+    <li><a href="#about-the-project"> • About The Project</a></li>
+    <li><a href="#quickstart"> • Quickstart</a></li>
+    <li><a href="#usage"> • Usage</a></li>
+    <li><a href="#philosophy"> • Philosophy</a></li>
+    <li><a href="#contribute"> • Contribute</a></li>
   </ol>
 </details>
 
