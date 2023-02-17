@@ -28,7 +28,7 @@
  *                                                                            *
 \* -------------------------------------------------------------------------- */
 
-package free
+package stop
 
 import (
 	"context"
@@ -54,7 +54,7 @@ func (o *option) Validate() error {
 }
 
 func (o *option) Execute(_ context.Context) error {
-	return o.outputFormat.ToPrinter().Print(o.writer, "free called")
+	return o.outputFormat.ToPrinter().Print(o.writer, "stop called")
 }
 
 func (o *option) SetWriter(writer io.Writer) {
@@ -64,9 +64,9 @@ func (o *option) SetWriter(writer io.Writer) {
 func NewCMD(ctx context.Context) *cobra.Command {
 	o := &option{}
 	cmd := &cobra.Command{
-		Use:   "free",
-		Short: "Free a runtime resource.",
-		Long:  `Free a runtime resource.`,
+		Use:   "stop",
+		Short: "Stop a cell resource.",
+		Long:  `Stop a cell resource.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return aeCMD.Run(ctx, o, cmd, args)
 		},

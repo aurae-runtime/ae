@@ -107,6 +107,7 @@ lint: ## Runs the linter
 check-editorconfig: ## Use to check if the codebase follows editorconfig rules
 	@docker run --rm --volume=$(shell PWD):/check mstruebing/editorconfig-checker
 
+# TODO: run this conditionally. see aurae-runtime/aurae for how to do this.
 .PHONY: proto
 proto:
 	@buf --version >/dev/null 2>&1 || (echo "Error: buf is not installed.  Please install from https://docs.buf.build/installation"; exit 1)
