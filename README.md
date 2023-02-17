@@ -261,10 +261,10 @@ The **[Aurae](https://github.com/aurae-runtime/aurae)** project is always lookin
     
 ## Code Quality
     
-### _Linting_
+### Linting
 
 We are using the [golangci-lint](https://golangci-lint.run/) tool to lint the code. You will need to install it for your system, and can find instructions at [this link](https://golangci-lint.run/usage/install/). This tool runs on every pull request, and it must pass before merging is allowed. You can run it locally with `make lint`.
     
-### _Formatting_
+### Formatting
     
 We are using the [gofmt](https://pkg.go.dev/cmd/gofmt) tool to lint the code. This tool runs on every pull request, and it must pass before merging is allowed. You can run it locally with `make format`.
