@@ -14,14 +14,21 @@
 <img alt="license" src="https://img.shields.io/github/license/aurae-runtime/ae?color=F79A25&logo=apache&logoColor=F79A25&style=for-the-badge"/>
   
 </a>
-
+   
 </div>
 
 <div align='center'>
 
+<a href="https://github.com/aurae-runtime/ae/actions/workflows/090-go-release-ubuntu-latest-go-releaser.yaml">
+<img alt="workflow status" src="https://img.shields.io/github/actions/workflow/status/aurae-runtime/ae/090-go-release-ubuntu-latest-go-releaser.yaml?logo=github-actions&logoColor=white&style=for-the-badge">
+    
+</a>
+
 <a href="https://github.com/aurae-runtime/ae/actions/workflows/001-go-ubuntu-latest-make-test-format-lint.yaml">
 <img alt="workflow status" src="https://img.shields.io/github/actions/workflow/status/aurae-runtime/ae/001-go-ubuntu-latest-make-test-format-lint.yaml?label=test%20and%20format&logo=github-actions&logoColor=white&style=for-the-badge">
 
+</a>
+    
 </div>
 
 ---
