@@ -6,12 +6,12 @@
 <div align='center'>
 
 <a href='https://github.com/aurae-runtime/ae/blob/main/go.mod'>
-<img alt="go version" src="https://img.shields.io/github/go-mod/go-version/aurae-runtime/ae?color=grey&logo=go&logoColor=white&style=for-the-badge">
+<img alt="go version" src="https://img.shields.io/github/go-mod/go-version/aurae-runtime/ae?color=00ADD8&logo=go&logoColor=00ADD8&style=for-the-badge">
   
 </a>
   
 <a href="https://github.com/aurae-runtime/ae/blob/main/LICENSE">
-<img alt="license" src="https://img.shields.io/github/license/aurae-runtime/ae?color=grey&logo=apache&logoColor=white&style=for-the-badge"/>
+<img alt="license" src="https://img.shields.io/github/license/aurae-runtime/ae?color=F79A25&logo=apache&logoColor=F79A25&style=for-the-badge"/>
   
 </a>
 
