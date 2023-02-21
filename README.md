@@ -100,119 +100,119 @@ There are a number of commands for `ae`.
 These are shown here in _alphabetical_ order.
 
 <details>
-    <summary><code>allocate</code></summary>
+<summary><code>allocate</code></summary>
 
-    &nbsp;
+&nbsp;
 
-    Resources are reserved and prerequisites can be managed, but it **does not** start. It will not work if the resources are not available.
+Resources are reserved and prerequisites can be managed, but it **does not** start. It will not work if the resources are not available.
 
-    ```
-    ae allocate
-    ae allocate cell
-    ae allocate pod
-    ```
-
-</details>
-
-<details>
-    <summary><code>check</code></summary>
-
-    &nbsp;
-
-    Checks the nodes of the cluster and returns the current serving status with the given list of services.
-
-    ```
-    ae check <cidr <cidr> | ip <ip>> <service, ...>
-    ```
+```
+ae allocate
+ae allocate cell
+ae allocate pod
+```
 
 </details>
 
 <details>
-    <summary><code>discover</code></summary>
+<summary><code>check</code></summary>
 
-    &nbsp;
+&nbsp;
 
-    Scans the complete network or cluster of nodes and returns information about it, including the version.
+Checks the nodes of the cluster and returns the current serving status with the given list of services.
 
-    ```
-    ae discover <cidr <cidr> | ip <ip>>
-    ```
-
-</details>
-
-<details>
-    <summary><code>free</code></summary>
-
-    &nbsp;
-
-    It frees the resources and destroys the prerequisites that were started. It will fail if the resources cannot be freed or do not exist.
-
-    ```
-    ae free
-    ae free cell
-    ae free pod
-    ```
+```
+ae check <cidr <cidr> | ip <ip>> <service, ...>
+```
 
 </details>
 
 <details>
-    <summary><code>logs</code></summary>
+<summary><code>discover</code></summary>
 
-    &nbsp;
+&nbsp;
 
-    This option will accept arguments and return or save some kind of logs.
+Scans the complete network or cluster of nodes and returns information about it, including the version.
 
-    ```
-    ae logs <options>
-    ```
-
-</details>
-
-<details>
-    <summary><code>oci</code></summary>
-
-    &nbsp;
-
-    Here the [OCI CLI interface](https://github.com/opencontainers/runtime-tools/blob/master/docs/command-line-interface.md) is implemented with the respective subcommands.
-
-    ```
-    ae oci
-    ae oci create
-    ae oci delete
-    ae oci kill
-    ae oci start
-    ae oci status
-    ```
+```
+ae discover <cidr <cidr> | ip <ip>>
+```
 
 </details>
 
 <details>
-    <summary><code>start</code></summary>
+<summary><code>free</code></summary>
 
-    &nbsp;
+&nbsp;
 
-    It will run the resources directly.
+It frees the resources and destroys the prerequisites that were started. It will fail if the resources cannot be freed or do not exist.
 
-    ```
-    ae start
-    ae start executable, exe
-    ae start container # Note this has an alias: 'ae oci start'
-    ```
+```
+ae free
+ae free cell
+ae free pod
+```
 
 </details>
 
 <details>
-    <summary><code>stop</code></summary>
+<summary><code>logs</code></summary>
 
-    &nbsp;
+&nbsp;
 
-    It will stop the resources directly.
+This option will accept arguments and return or save some kind of logs.
 
-    ```
-    ae stop
-    ae stop executable, exe
-    ae stop container # Note this has an alias: 'ae oci kill'
-    ```
+```
+ae logs <options>
+```
+
+</details>
+
+<details>
+<summary><code>oci</code></summary>
+
+&nbsp;
+
+Here the [OCI CLI interface](https://github.com/opencontainers/runtime-tools/blob/master/docs/command-line-interface.md) is implemented with the respective subcommands.
+
+```
+ae oci
+ae oci create
+ae oci delete
+ae oci kill
+ae oci start
+ae oci status
+```
+
+</details>
+
+<details>
+<summary><code>start</code></summary>
+
+&nbsp;
+
+It will run the resources directly.
+
+```
+ae start
+ae start executable, exe
+ae start container # Note this has an alias: 'ae oci start'
+```
+
+</details>
+
+<details>
+<summary><code>stop</code></summary>
+
+&nbsp;
+
+It will stop the resources directly.
+
+```
+ae stop
+ae stop executable, exe
+ae stop container # Note this has an alias: 'ae oci kill'
+```
 
 </details>
 
