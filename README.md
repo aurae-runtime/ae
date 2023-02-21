@@ -80,7 +80,7 @@ _Typical tasks_ such as:
 
 * "Rolling out NGINX to production"
 * "Counting the numbers of threads of a process"
-* "Changing the current databse connection count for a service"
+* "Changing the current database connection count for a service"
 * "Swinging traffic from one to another"
 
 should be possible with `ae`.
@@ -160,7 +160,7 @@ These are shown here in _alphabetical_ order.
   
   &nbsp;
   
-  This option will accept aruguments and return or save some kind of logs.
+  This option will accept arguments and return or save some kind of logs.
     
   ```
   ae logs <options>
@@ -191,7 +191,7 @@ These are shown here in _alphabetical_ order.
   
   &nbsp;
   
-  It will run the rescource directly.
+  It will run the resources directly.
     
   ```
   ae start
@@ -206,7 +206,7 @@ These are shown here in _alphabetical_ order.
   
   &nbsp;
   
-  It will stop the rescource directly.
+  It will stop the resources directly.
     
   ```
   ae stop
@@ -225,7 +225,7 @@ We do not want `ae` to become a junk drawer. In situations where we are consider
 
 For example imagine we were considering bringing in a `--filter` flag or a `--query` flag which would allow for us to filter the output returned by `ae`. In this situation we could very well identify advanced query patterns and libraries that would make it possible to adopt this feature.
 
-However the feature comes at a maintenance cost, and frankly already exists in other tools. Instead of adopting a filter syntax and the associated burden that comes along with it we instead focus on outputting to formats (such as JSON) which can easily be queried by existing tools (such as [jq](https://stedolan.github.io/jq/)).
+However, the feature comes at a maintenance cost, and frankly already exists in other tools. Instead of adopting a filter syntax and the associated burden that comes along with it, we instead focus on outputting to formats (such as JSON) which can easily be queried by existing tools (such as [jq](https://stedolan.github.io/jq/)).
     
 ### Just because you can, doesn't mean you should.
     
@@ -249,7 +249,7 @@ This will be a delicate principle to consider, as we also will need to hold firm
 
 For example the ae project will need to read from a configuration file in order to communicate with a remote server. In one case we could assume that the configuration file is always in a familiar location for convenience. In the other case we do not want to force a user to pass a very long flag every time they run the tool. What do we do?
 
-We hold the opinion that the the file should be in a few well documented locations, and create logic to try the locations if no flag is passed. If a user passes a flag we should remove all assumptions from the program and only consider the input. We prefer clarity over magic.
+We hold the opinion that the file should be in a few well documented locations, and create logic to try the locations if no flag is passed. If a user passes a flag we should remove all assumptions from the program and only consider the input. We prefer clarity over magic.
     
 ### Remote Servers instead of Local Systems!
     
