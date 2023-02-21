@@ -1,34 +1,34 @@
 <h1 align="center">
-  <code>ae</code>
-  <h3 align="center">UNIX inspired CLI Client for Aurae</h3>
+    <code>ae</code>
+    <h3 align="center">UNIX inspired CLI Client for Aurae</h3>
 </h1>
 
 <div align='center'>
 
 <a href='https://github.com/aurae-runtime/ae/blob/main/go.mod'>
 <img alt="go version" src="https://img.shields.io/github/go-mod/go-version/aurae-runtime/ae?color=00ADD8&logo=go&logoColor=00ADD8&style=for-the-badge">
-  
+
 </a>
-  
+
 <a href="https://github.com/aurae-runtime/ae/blob/main/LICENSE">
 <img alt="license" src="https://img.shields.io/github/license/aurae-runtime/ae?color=F79A25&logo=apache&logoColor=F79A25&style=for-the-badge"/>
-  
+
 </a>
-   
+
 </div>
 
 <div align='center'>
 
 <a href="https://github.com/aurae-runtime/ae/actions/workflows/090-go-release-ubuntu-latest-go-releaser.yaml">
 <img alt="workflow status" src="https://img.shields.io/github/actions/workflow/status/aurae-runtime/ae/090-go-release-ubuntu-latest-go-releaser.yaml?logo=github-actions&logoColor=white&style=for-the-badge">
-    
+
 </a>
 
 <a href="https://github.com/aurae-runtime/ae/actions/workflows/001-go-ubuntu-latest-make-test-format-lint.yaml">
 <img alt="workflow status" src="https://img.shields.io/github/actions/workflow/status/aurae-runtime/ae/001-go-ubuntu-latest-make-test-format-lint.yaml?label=test%20and%20format&logo=github-actions&logoColor=white&style=for-the-badge">
 
 </a>
-    
+
 </div>
 
 ---
@@ -40,14 +40,14 @@
 <h2 id="table-of-contents"> 📑 Table of Contents</h2>
 
 <details open="open">
-  <summary>Table of Contents</summary>
-  <ol>
-    <li><a href="#about-the-project"> • About The Project</a></li>
-    <li><a href="#quickstart"> • Quickstart</a></li>
-    <li><a href="#usage"> • Usage</a></li>
-    <li><a href="#philosophy"> • Philosophy</a></li>
-    <li><a href="#contribute"> • Contribute</a></li>
-  </ol>
+    <summary>Table of Contents</summary>
+        <ol>
+            <li><a href="#about-the-project"> • About The Project</a></li>
+            <li><a href="#quickstart"> • Quickstart</a></li>
+            <li><a href="#usage"> • Usage</a></li>
+            <li><a href="#philosophy"> • Philosophy</a></li>
+            <li><a href="#contribute"> • Contribute</a></li>
+        </ol>
 </details>
 
 &nbsp;
@@ -100,120 +100,120 @@ There are a number of commands for `ae`.
 These are shown here in _alphabetical_ order.
 
 <details>
-  <summary><code>allocate</code></summary>
-   
-  &nbsp;
-  
-  Resources are reserved and prerequisites can be managed, but it **does not** start. It will not work if the resources are not available.
-    
-  ```
-  ae allocate
-  ae allocate cell
-  ae allocate pod
-  ```
-  
+    <summary><code>allocate</code></summary>
+
+    &nbsp;
+
+    Resources are reserved and prerequisites can be managed, but it **does not** start. It will not work if the resources are not available.
+
+    ```
+    ae allocate
+    ae allocate cell
+    ae allocate pod
+    ```
+
 </details>
 
 <details>
-  <summary><code>check</code></summary>
-  
-  &nbsp;
-  
-  Checks the nodes of the cluster and returns the current serving status with the given list of services.
-    
-  ```
-  ae check <cidr <cidr> | ip <ip>> <service, ...>
-  ```
-  
+    <summary><code>check</code></summary>
+
+    &nbsp;
+
+    Checks the nodes of the cluster and returns the current serving status with the given list of services.
+
+    ```
+    ae check <cidr <cidr> | ip <ip>> <service, ...>
+    ```
+
 </details>
 
 <details>
-  <summary><code>discover</code></summary>
-  
-  &nbsp;
-  
-  Scans the complete network or cluster of nodes and returns information about it, including the version.
-    
-  ```
-  ae discover <cidr <cidr> | ip <ip>>
-  ```
-    
+    <summary><code>discover</code></summary>
+
+    &nbsp;
+
+    Scans the complete network or cluster of nodes and returns information about it, including the version.
+
+    ```
+    ae discover <cidr <cidr> | ip <ip>>
+    ```
+
 </details>
 
 <details>
-  <summary><code>free</code></summary>
-  
-  &nbsp;
-  
-  It frees the resources and destroys the prerequisites that were started. It will fail if the resources cannot be freed or do not exist.
-    
-  ```
-  ae free
-  ae free cell
-  ae free pod
-  ```
-    
+    <summary><code>free</code></summary>
+
+    &nbsp;
+
+    It frees the resources and destroys the prerequisites that were started. It will fail if the resources cannot be freed or do not exist.
+
+    ```
+    ae free
+    ae free cell
+    ae free pod
+    ```
+
 </details>
 
 <details>
-  <summary><code>logs</code></summary>
-  
-  &nbsp;
-  
-  This option will accept arguments and return or save some kind of logs.
-    
-  ```
-  ae logs <options>
-  ```
-    
+    <summary><code>logs</code></summary>
+
+    &nbsp;
+
+    This option will accept arguments and return or save some kind of logs.
+
+    ```
+    ae logs <options>
+    ```
+
 </details>
 
 <details>
-  <summary><code>oci</code></summary>
-  
-  &nbsp;
-  
-  Here the [OCI CLI interface](https://github.com/opencontainers/runtime-tools/blob/master/docs/command-line-interface.md) is implemented with the respective subcommands.
-    
-  ```
-  ae oci
-  ae oci create
-  ae oci delete
-  ae oci kill
-  ae oci start
-  ae oci status
-  ```
-    
+    <summary><code>oci</code></summary>
+
+    &nbsp;
+
+    Here the [OCI CLI interface](https://github.com/opencontainers/runtime-tools/blob/master/docs/command-line-interface.md) is implemented with the respective subcommands.
+
+    ```
+    ae oci
+    ae oci create
+    ae oci delete
+    ae oci kill
+    ae oci start
+    ae oci status
+    ```
+
 </details>
 
 <details>
-  <summary><code>start</code></summary>
-  
-  &nbsp;
-  
-  It will run the resources directly.
-    
-  ```
-  ae start
-  ae start executable, exe
-  ae start container # Note this has an alias: 'ae oci start'
-  ```
-    
+    <summary><code>start</code></summary>
+
+    &nbsp;
+
+    It will run the resources directly.
+
+    ```
+    ae start
+    ae start executable, exe
+    ae start container # Note this has an alias: 'ae oci start'
+    ```
+
 </details>
 
 <details>
-  <summary><code>stop</code></summary>
-  
-  &nbsp;
-  
-  It will stop the resources directly.
-    
-  ```
-  ae stop
-  ae stop executable, exe
-  ae stop container # Note this has an alias: 'ae oci kill'
-  ```
-    
+    <summary><code>stop</code></summary>
+
+    &nbsp;
+
+    It will stop the resources directly.
+
+    ```
+    ae stop
+    ae stop executable, exe
+    ae stop container # Note this has an alias: 'ae oci kill'
+    ```
+
 </details>
 
 <!-- PHILOSOPHY -->
