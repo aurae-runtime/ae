@@ -1,6 +1,6 @@
 module github.com/aurae-runtime/ae
 
-go 1.19
+go 1.20
 
 require (
 	github.com/3th1nk/cidr v0.2.0
