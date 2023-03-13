@@ -47,6 +47,7 @@ type option struct {
 	outputFormat *cli.OutputFormat
 	directory    string
 	domain       string
+	user         string
 	silent       bool
 	writer       io.Writer
 }
@@ -69,6 +70,18 @@ func (o *option) Validate() error {
 }
 
 func (o *option) Execute(_ context.Context) error {
+	if o.user != "" {
+		clientCSR, err := pki.CreateClientCSR(o.directory, o.domain, o.user)
+		if err != nil {
+			return fmt.Errorf("failed to create client csr: %w", err)
+		}
+		if !o.silent {
+			o.outputFormat.ToPrinter().Print(o.writer, &clientCSR)
+		}
+
+		return nil
+	}
+
 	rootCA, err := pki.CreateAuraeRootCA(o.directory, o.domain)
 	if err != nil {
 		return fmt.Errorf("failed to create aurae root ca: %w", err)
@@ -104,6 +117,7 @@ ae pki create --dir ./pki/ my.domain.com`,
 
 	o.outputFormat.AddFlags(cmd)
 	cmd.Flags().StringVarP(&o.directory, "dir", "d", o.directory, "Output directory to store CA files.")
+	cmd.Flags().StringVarP(&o.user, "user", "u", o.user, "Creates client certificate for a given user.")
 	cmd.Flags().BoolVarP(&o.silent, "silent", "s", o.silent, "Silent mode, omits output")
 
 	return cmd
