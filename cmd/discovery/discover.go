@@ -61,14 +61,16 @@ type outputDiscover struct {
 type option struct {
 	aeCMD.Option
 	ctx          context.Context
+	auth         *config.Auth
+	outputFormat *cli.OutputFormat
 	cidr         string
 	ip           string
 	port         uint16
 	protocol     string
 	verbose      bool
 	writer       io.Writer
-	output       *outputDiscover
-	outputFormat *cli.OutputFormat
+
+	output *outputDiscover
 }
 
 func (o *option) Complete(args []string) error {
@@ -141,7 +143,7 @@ func (o option) checkHost(ip_str string) bool {
 		log.Printf("connecting to %s:%d using protocol %s\n", ip_str, o.port, o.protocol)
 	}
 
-	c, err := client.New(o.ctx, config.WithSystem(config.System{Protocol: o.protocol, Socket: net.JoinHostPort(ip_str, fmt.Sprintf("%d", o.port))}))
+	c, err := client.New(o.ctx, config.WithAuth(*o.auth), config.WithSystem(config.System{Protocol: o.protocol, Socket: net.JoinHostPort(ip_str, fmt.Sprintf("%d", o.port))}))
 	if err != nil {
 		log.Fatalf("failed to create client: %s", err)
 		return false
@@ -171,6 +173,7 @@ func (o option) checkHost(ip_str string) bool {
 
 func NewCMD(ctx context.Context) *cobra.Command {
 	o := &option{
+		auth: &config.Auth{},
 		outputFormat: cli.NewOutputFormat().
 			WithDefaultFormat(printer.NewJSON().Format()).
 			WithPrinter(printer.NewJSON()),
@@ -183,6 +186,7 @@ func NewCMD(ctx context.Context) *cobra.Command {
 			return aeCMD.Run(ctx, o, cmd, args)
 		},
 	}
+	o.auth.AddFlags(cmd)
 	o.outputFormat.AddFlags(cmd)
 	cmd.Flags().Uint16Var(&o.port, "port", o.port, "The port to use when trying to connect")
 	cmd.Flags().BoolVar(&o.verbose, "verbose", o.verbose, "Lots of output")
