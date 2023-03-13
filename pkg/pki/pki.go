@@ -31,7 +31,6 @@
 package pki
 
 import (
-	"bytes"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha1"
@@ -45,36 +44,48 @@ import (
 	"time"
 )
 
-type AuraeCA struct {
+type Certificate struct {
 	Certificate string `json:"cert" yaml:"cert"`
-	Key         string `json:"key" yaml:"key"`
+	PrivateKey  string `json:"key" yaml:"key"`
 }
 
-func CreateAuraeRootCA(path string, domainName string) (*AuraeCA, error) {
+type CertificateRequest struct {
+	CSR        string `json:"csr" yaml:"csr"`
+	PrivateKey string `json:"key" yaml:"key"`
+	User       string `json:"user" yaml:"user"`
+}
+
+func CreateAuraeRootCA(path string, domainName string) (*Certificate, error) {
 	priv, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
-		return &AuraeCA{}, fmt.Errorf("failed to generate private key: %w", err)
+		return &Certificate{}, fmt.Errorf("failed to generate private key: %w", err)
 	}
 
-	template := x509.Certificate{}
-	template.Subject = pkix.Name{
+	subj := pkix.Name{
 		Organization:       []string{"Aurae"},
 		OrganizationalUnit: []string{"Runtime"},
-		StreetAddress:      []string{"aurae"},
+		Province:           []string{"aurae"},
 		Locality:           []string{"aurae"},
 		Country:            []string{"IS"},
 		CommonName:         domainName,
 	}
-	template.NotBefore = time.Now()
-	template.NotAfter = template.NotBefore.Add(24 * time.Hour * 9999)
-	template.IsCA = true
-	template.BasicConstraintsValid = true
-	template.DNSNames = []string{domainName}
+
+	now := time.Now()
 
 	serialNumberLimit := new(big.Int).Lsh(big.NewInt(1), 128)
-	template.SerialNumber, err = rand.Int(rand.Reader, serialNumberLimit)
+	serialNumber, err := rand.Int(rand.Reader, serialNumberLimit)
 	if err != nil {
-		return &AuraeCA{}, fmt.Errorf("failed to generate serial number: %w", err)
+		return &Certificate{}, fmt.Errorf("failed to generate serial number: %w", err)
+	}
+
+	template := x509.Certificate{
+		Subject:               subj,
+		NotBefore:             now,
+		NotAfter:              now.Add(24 * time.Hour * 9999),
+		IsCA:                  true,
+		BasicConstraintsValid: true,
+		DNSNames:              []string{domainName},
+		SerialNumber:          serialNumber,
 	}
 
 	// To get an AuthorityKeyId which is equal to SubjectKeyId, we are manually
@@ -94,23 +105,24 @@ func CreateAuraeRootCA(path string, domainName string) (*AuraeCA, error) {
 	template.SubjectKeyId = pubHash[:]
 	template.AuthorityKeyId = template.SubjectKeyId
 
-	derBytes, err := x509.CreateCertificate(rand.Reader, &template, &template, &priv.PublicKey, priv)
+	crtBytes, err := x509.CreateCertificate(rand.Reader, &template, &template, &priv.PublicKey, priv)
 	if err != nil {
-		return &AuraeCA{}, fmt.Errorf("failed to create certificate: %w", err)
+		return &Certificate{}, fmt.Errorf("failed to create certificate: %w", err)
 	}
 
-	certBuf, err := getCertBuf(derBytes)
-	if err != nil {
-		return &AuraeCA{}, err
-	}
-	keyBuf, err := getKeyBuf(priv)
-	if err != nil {
-		return &AuraeCA{}, err
-	}
+	crtPem := pem.EncodeToMemory(&pem.Block{
+		Type:  "CERTIFICATE",
+		Bytes: crtBytes,
+	})
 
-	ca := &AuraeCA{
-		Certificate: certBuf.String(),
-		Key:         keyBuf.String(),
+	keyPem := pem.EncodeToMemory(&pem.Block{
+		Type:  "RSA PRIVATE KEY",
+		Bytes: x509.MarshalPKCS1PrivateKey(priv),
+	})
+
+	ca := &Certificate{
+		Certificate: string(crtPem),
+		PrivateKey:  string(keyPem),
 	}
 
 	if path != "" {
@@ -123,7 +135,59 @@ func CreateAuraeRootCA(path string, domainName string) (*AuraeCA, error) {
 	return ca, nil
 }
 
-func createCAFiles(path string, ca *AuraeCA) error {
+func CreateClientCSR(path, domain, user string) (*CertificateRequest, error) {
+	priv, err := rsa.GenerateKey(rand.Reader, 4096)
+	if err != nil {
+		return &CertificateRequest{}, fmt.Errorf("failed to generate private key: %w", err)
+	}
+
+	subj := pkix.Name{
+		Organization:       []string{"Aurae"},
+		OrganizationalUnit: []string{"Runtime"},
+		Province:           []string{"aurae"},
+		Locality:           []string{"aurae"},
+		Country:            []string{"IS"},
+		CommonName:         fmt.Sprintf("%s.%s", user, domain),
+	}
+
+	template := x509.CertificateRequest{
+		Subject:            subj,
+		SignatureAlgorithm: x509.SHA256WithRSA,
+		DNSNames:           []string{fmt.Sprintf("%s.%s", user, domain)},
+	}
+
+	csrBytes, err := x509.CreateCertificateRequest(rand.Reader, &template, priv)
+	if err != nil {
+		return &CertificateRequest{}, fmt.Errorf("could not create certificate request: %w", err)
+	}
+
+	csrPem := pem.EncodeToMemory(&pem.Block{
+		Type:  "CERTIFICATE REQUEST",
+		Bytes: csrBytes,
+	})
+
+	keyPem := pem.EncodeToMemory(&pem.Block{
+		Type:  "RSA PRIVATE KEY",
+		Bytes: x509.MarshalPKCS1PrivateKey(priv),
+	})
+
+	csr := &CertificateRequest{
+		CSR:        string(csrPem),
+		PrivateKey: string(keyPem),
+		User:       user,
+	}
+
+	if path != "" {
+		err = createCsrFiles(path, csr)
+		if err != nil {
+			return csr, err
+		}
+	}
+
+	return csr, nil
+}
+
+func createCAFiles(path string, ca *Certificate) error {
 	path = filepath.Clean(path)
 	err := os.MkdirAll(path, os.ModePerm)
 	if err != nil {
@@ -138,7 +202,29 @@ func createCAFiles(path string, ca *AuraeCA) error {
 		return err
 	}
 
-	err = writeStringToFile(keyPath, ca.Key)
+	err = writeStringToFile(keyPath, ca.PrivateKey)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func createCsrFiles(path string, ca *CertificateRequest) error {
+	path = filepath.Clean(path)
+	err := os.MkdirAll(path, os.ModePerm)
+	if err != nil {
+		return fmt.Errorf("failed to create output directory: %w", err)
+	}
+
+	csrPath := filepath.Join(path, fmt.Sprintf("client.%s.csr", ca.User))
+	keyPath := filepath.Join(path, fmt.Sprintf("client.%s.key", ca.User))
+
+	err = writeStringToFile(csrPath, ca.CSR)
+	if err != nil {
+		return err
+	}
+
+	err = writeStringToFile(keyPath, ca.PrivateKey)
 	if err != nil {
 		return err
 	}
@@ -158,32 +244,4 @@ func writeStringToFile(p string, s string) error {
 	}
 
 	return nil
-}
-
-func getCertBuf(derBytes []byte) (*bytes.Buffer, error) {
-	var certBytes []byte
-	certBuf := bytes.NewBuffer(certBytes)
-	err := pem.Encode(certBuf, &pem.Block{
-		Type:  "CERTIFICATE",
-		Bytes: derBytes,
-	})
-	if err != nil {
-		return &bytes.Buffer{}, fmt.Errorf("failed to write certificate buffer: %w", err)
-	}
-
-	return certBuf, nil
-}
-
-func getKeyBuf(priv *rsa.PrivateKey) (*bytes.Buffer, error) {
-	var keyBytes []byte
-	keyBuf := bytes.NewBuffer(keyBytes)
-	err := pem.Encode(keyBuf, &pem.Block{
-		Type:  "RSA PRIVATE KEY",
-		Bytes: x509.MarshalPKCS1PrivateKey(priv),
-	})
-	if err != nil {
-		return &bytes.Buffer{}, fmt.Errorf("failed to write private key buffer: %w", err)
-	}
-
-	return keyBuf, nil
 }

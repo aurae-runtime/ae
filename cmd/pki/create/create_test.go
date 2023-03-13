@@ -53,7 +53,7 @@ func TestPKICreateCMD(t *testing.T) {
 			t.Errorf("ae pki create my.domain.com")
 		}
 
-		var ca pki.AuraeCA
+		var ca pki.Certificate
 		err = json.Unmarshal(buffer.Bytes(), &ca)
 		if err != nil {
 			t.Errorf("could not marshall certificate")
