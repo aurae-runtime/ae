@@ -129,7 +129,7 @@ func (o *option) Validate() error {
 		caKeyPem, _ := pem.Decode([]byte(o.ca.PrivateKey))
 		_, err := x509.ParsePKCS1PrivateKey(caKeyPem.Bytes)
 		if err != nil {
-			return fmt.Errorf("could not parse ca file")
+			return fmt.Errorf("could not parse key file")
 		}
 	}
 
