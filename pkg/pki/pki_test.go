@@ -45,7 +45,7 @@ func TestCreateAuraeRootCA(t *testing.T) {
 	t.Run("createAuraeCA", func(t *testing.T) {
 		domainName := "unsafe.aurae.io"
 
-		auraeCa, err := CreateAuraeRootCA("", "unsafe.aurae.io")
+		auraeCa, err := HandleCreateAuraeRootCA("", "unsafe.aurae.io")
 		if err != nil {
 			t.Errorf("could not create auraeCA")
 		}
@@ -64,7 +64,7 @@ func TestCreateAuraeRootCA(t *testing.T) {
 		path := "_tmp/pki"
 		domainName := "unsafe.aurae.io"
 
-		_, err := CreateAuraeRootCA(path, domainName)
+		_, err := HandleCreateAuraeRootCA(path, domainName)
 		if err != nil {
 			t.Errorf("could not create auraeCA")
 		}
@@ -99,7 +99,7 @@ func TestCreateAuraeRootCA(t *testing.T) {
 
 func TestCreateCSR(t *testing.T) {
 	t.Run("createCSR", func(t *testing.T) {
-		clientCsr, err := CreateClientCSR("", "unsafe.aurae.io", "christoph")
+		clientCsr, err := HandleCreateClientCSR("", "unsafe.aurae.io", "christoph")
 		if err != nil {
 			t.Errorf("could not create csr")
 		}
@@ -121,7 +121,7 @@ func TestCreateCSR(t *testing.T) {
 
 	t.Run("createCSR with local files", func(t *testing.T) {
 		path := "_tmp/pki"
-		clientCsr, err := CreateClientCSR(path, "unsafe.aurae.io", "christoph")
+		clientCsr, err := HandleCreateClientCSR(path, "unsafe.aurae.io", "christoph")
 		if err != nil {
 			t.Errorf("could not create csr")
 		}
@@ -224,7 +224,7 @@ func TestCreateCSR(t *testing.T) {
 		}
 
 		// Genenerate a new CSR
-		clientCsr, err := CreateClientCSR("", "unsafe.aurae.io", "christoph")
+		clientCsr, err := HandleCreateClientCSR("", "unsafe.aurae.io", "christoph")
 		if err != nil {
 			t.Errorf("could create csr")
 		}
