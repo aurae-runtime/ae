@@ -47,7 +47,7 @@ func New(ctx context.Context, cfg ...config.Config) (Client, error) {
 		return d.DialContext(ctx, cf.System.Protocol, addr)
 	}
 
-	conn, err := grpc.Dial(cf.System.Socket, grpc.WithTransportCredentials(tlsCreds), grpc.WithContextDialer(dialer))
+	conn, err := grpc.NewClient(cf.System.Socket, grpc.WithTransportCredentials(tlsCreds), grpc.WithContextDialer(dialer))
 	if err != nil {
 		return nil, fmt.Errorf("Failed to dial server: %s", err)
 	}
