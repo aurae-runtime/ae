@@ -6,7 +6,7 @@ require (
 	github.com/3th1nk/cidr v0.2.0
 	github.com/prometheus/common v0.55.0
 	github.com/spf13/cobra v1.8.1
-	google.golang.org/grpc v1.64.0
+	google.golang.org/grpc v1.64.1
 	google.golang.org/protobuf v1.34.2
 	gopkg.in/yaml.v2 v2.4.0
 )
