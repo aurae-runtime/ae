@@ -5,3 +5,4 @@ dist/
 .vscode/
 pkg/api/
 ae
+node_modules/

@@ -1,7 +1,21 @@
-issues:
-  exclude-dirs:
-    - pkg/api/
-
+version: "2"
 linters:
-  disable:
-    - typecheck
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    paths:
+      - pkg/api/
+      - third_party$
+      - builtin$
+      - examples$
+formatters:
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
