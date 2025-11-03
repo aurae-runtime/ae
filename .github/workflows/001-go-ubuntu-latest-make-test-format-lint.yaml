@@ -54,8 +54,8 @@ jobs:
 
       - name: Lint
         uses: golangci/golangci-lint-action@v8
-          with:
-            version: v2.1
+        with:
+          version: v2.1
 
   editorconfig:
     runs-on: ubuntu-latest
