@@ -71,7 +71,7 @@ func (o *option) Validate() error {
 
 func (o *option) Execute(_ context.Context) error {
 	if o.user != "" {
-		clientCSR, err := pki.CreateClientCSR(o.directory, o.domain, o.user)
+		clientCSR, err := pki.HandleCreateClientCSR(o.directory, o.domain, o.user)
 		if err != nil {
 			return fmt.Errorf("failed to create client csr: %w", err)
 		}
@@ -82,7 +82,7 @@ func (o *option) Execute(_ context.Context) error {
 		return nil
 	}
 
-	rootCA, err := pki.CreateAuraeRootCA(o.directory, o.domain)
+	rootCA, err := pki.HandleCreateAuraeRootCA(o.directory, o.domain)
 	if err != nil {
 		return fmt.Errorf("failed to create aurae root ca: %w", err)
 	}
