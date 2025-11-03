@@ -53,7 +53,9 @@ jobs:
         run: make proto
 
       - name: Lint
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v8
+          with:
+            version: v2.1
 
   editorconfig:
     runs-on: ubuntu-latest

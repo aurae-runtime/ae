@@ -228,7 +228,7 @@ func createCA(domainName string) ([]byte, []byte, error) {
 	//
 	// We need a hash of the publickey, so hopefully this link is right
 	// https://stackoverflow.com/questions/52502511/how-to-generate-bytes-array-from-publickey#comment92269419_52502639
-	pubHash := sha1.Sum(priv.PublicKey.N.Bytes())
+	pubHash := sha1.Sum(priv.N.Bytes())
 	template.SubjectKeyId = pubHash[:]
 	template.AuthorityKeyId = template.SubjectKeyId
 

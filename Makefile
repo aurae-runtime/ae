@@ -65,7 +65,7 @@ goreleaser: ## Run goreleaser directly at the pinned version 🛠
 
 .PHONY: mod
 mod: proto ## Go mod things
-	go mod tidy
+	go mod tidy -e
 	go mod vendor
 	go mod download
 
