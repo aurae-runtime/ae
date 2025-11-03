@@ -5,4 +5,9 @@ dist/
 .vscode/
 pkg/api/
 ae
+
+# if we install buf locally then it's in the working directory as a node
+# module
 node_modules/
+package.json
+package-lock.json

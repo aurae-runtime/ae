@@ -34,12 +34,12 @@ type client struct {
 func New(ctx context.Context, cfg ...config.Config) (Client, error) {
 	cf, err := config.From(cfg...)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to initialize client config: %s", err)
+		return nil, fmt.Errorf("failed to initialize client config: %s", err)
 	}
 
 	tlsCreds, err := loadTLSCredentials(cf.Auth)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to load TLS credentials: %s", err)
+		return nil, fmt.Errorf("failed to load TLS credentials: %s", err)
 	}
 
 	dialer := func(ctx context.Context, addr string) (net.Conn, error) {
@@ -49,7 +49,7 @@ func New(ctx context.Context, cfg ...config.Config) (Client, error) {
 
 	conn, err := grpc.NewClient(cf.System.Socket, grpc.WithTransportCredentials(tlsCreds), grpc.WithContextDialer(dialer))
 	if err != nil {
-		return nil, fmt.Errorf("Failed to dial server: %s", err)
+		return nil, fmt.Errorf("failed to dial server: %s", err)
 	}
 
 	return &client{
@@ -69,7 +69,7 @@ func loadTLSCredentials(auth config.Auth) (credentials.TransportCredentials, err
 
 	certPool := x509.NewCertPool()
 	if !certPool.AppendCertsFromPEM(caPEM) {
-		return nil, fmt.Errorf("Failed to add server CA's certificate")
+		return nil, fmt.Errorf("failed to add server CA's certificate")
 	}
 
 	clientKeyPair, err := tls.LoadX509KeyPair(auth.ClientCert, auth.ClientKey)
@@ -88,21 +88,21 @@ func loadTLSCredentials(auth config.Auth) (credentials.TransportCredentials, err
 
 func (c *client) Discovery() (discovery.Discovery, error) {
 	if c.discovery == nil {
-		return nil, fmt.Errorf("Discovery service is not available")
+		return nil, fmt.Errorf("discovery service is not available")
 	}
 	return c.discovery, nil
 }
 
 func (c *client) Health() (health.Health, error) {
 	if c.health == nil {
-		return nil, fmt.Errorf("Health service is not available")
+		return nil, fmt.Errorf("health service is not available")
 	}
 	return c.health, nil
 }
 
 func (c *client) Observe() (observe.Observe, error) {
 	if c.observe == nil {
-		return nil, fmt.Errorf("Observe service is not available")
+		return nil, fmt.Errorf("observe service is not available")
 	}
 	return c.observe, nil
 }
