@@ -101,7 +101,7 @@ check-format: ## Used by CI to check if code is formatted
 
 .PHONY: lint
 lint: ## Runs the linter
-	golangci-lint run
+	go tool golangci-lint run
 
 .PHONY: check-editorconfig
 check-editorconfig: ## Use to check if the codebase follows editorconfig rules

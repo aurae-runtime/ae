@@ -270,7 +270,7 @@ The **[Aurae](https://github.com/aurae-runtime/aurae)** project is always lookin
     
 ### Linting
 
-We are using the [golangci-lint](https://golangci-lint.run/) tool to lint the code. You will need to install it for your system, and can find instructions at [this link](https://golangci-lint.run/usage/install/). This tool runs on every pull request, and it must pass before merging is allowed. You can run it locally with `make lint`.
+We use [golangci-lint](https://golangci-lint.run/) to lint the code. It is managed as a Go tool dependency in `go.mod`, so no manual installation is required. You can run it locally with `make lint`.
     
 ### Formatting
     
